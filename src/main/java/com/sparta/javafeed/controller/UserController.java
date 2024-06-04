@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<SignupResponseDto> register(@RequestBody @Valid SignupRequestDto signupRequest) {
-        return null;
+    public ResponseEntity<String> register(@RequestBody @Valid SignupRequestDto signupRequest) {
+        return userService.signupUser(signupRequest);
     }
 }

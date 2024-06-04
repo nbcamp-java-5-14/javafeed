@@ -1,5 +1,6 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,4 +57,11 @@ public class User {
 
     @Column
     private LocalDateTime userStatusModifiedAt;
+
+    public User(SignupRequestDto signupRequest) {
+        this.accountId = signupRequest.getAccountId();
+        this.password = signupRequest.getPassword();
+        this.name = signupRequest.getName();
+        this.email = signupRequest.getEmail();
+    }
 }
