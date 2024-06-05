@@ -1,6 +1,7 @@
 package com.sparta.javafeed.entity;
 
 import com.sparta.javafeed.dto.SignupRequestDto;
+import com.sparta.javafeed.dto.UserInfoRequestDto;
 import com.sparta.javafeed.enums.UserRole;
 import com.sparta.javafeed.enums.UserStatus;
 import jakarta.persistence.*;
@@ -47,7 +48,7 @@ public class User extends Timestamped {
     // Eunm 값이 데이터가 숫자로 저장되기 때문에, 스트링으로 찍히도록 하기위함.
     private UserStatus userStatus;
 
-    @Column()
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
@@ -75,5 +76,15 @@ public class User extends Timestamped {
             return true;
         }
         return false;
+    }
+
+    public void updateUserInfo(UserInfoRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.email = requestDto.getEmail();
+        this.intro = requestDto.getIntro();
+    }
+
+    public void updatePassword(String encodedNewPassword) {
+        this.password = encodedNewPassword;
     }
 }

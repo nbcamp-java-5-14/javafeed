@@ -1,15 +1,23 @@
 package com.sparta.javafeed.service;
 
+import com.sparta.javafeed.dto.*;
 import com.sparta.javafeed.dto.ExceptionDto;
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.SignupResponseDto;
+
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import com.sparta.javafeed.dto.LoginRequestDto;
@@ -88,4 +96,43 @@ public class UserService {
             throw new UserException(ErrorType.NOT_FOUND_USER);
         }
     }
+
+    public UserInfoResponseDto getUser(String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
+
+        return new UserInfoResponseDto(byAccountId);
+    }
+
+    @Transactional
+    public String updateUser(UserInfoRequestDto requestDto, String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
+
+        byAccountId.updateUserInfo(requestDto);
+
+        return "프로필이 수정되었습니다.";
+    }
+
+    @Transactional
+    public String updatePassword(PasswordRequestDto requestDto, String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
+
+        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), byAccountId.getPassword())){
+            throw new UserException(ErrorType.INVALID_PASSWORD);
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
+
+        byAccountId.updatePassword(encodedNewPassword);
+
+        return "비밀번호가 수정되었습니다.";
+    }
+
+
+    private User findByAccountId(String accountId){
+        return userRepository.findByAccountId(accountId).orElseThrow(
+                () -> new UserException(ErrorType.INVALID_ACCOUNT_ID)
+        );
+    }
+
+
 }
