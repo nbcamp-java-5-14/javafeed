@@ -41,6 +41,13 @@ public class NewsfeedService {
 
     }
 
+    @Transactional
+    public Long deleteNewsfeed(Long id, User user) {
+        Newsfeed newsfeed = checkValidatedNewfeed(id, user);
+        newsfeedRepository.delete(newsfeed);
+        return newsfeed.getId();
+    }
+
     private Newsfeed checkValidatedNewfeed(Long id, User user) {
         Newsfeed newsfeed;
 

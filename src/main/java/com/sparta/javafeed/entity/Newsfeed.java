@@ -44,6 +44,7 @@ public class Newsfeed {
         this.title = title;
         this.description = description;
         this.user = user;
+        this.user.getNewsfeeds().add(this);
     }
 
     public void update(NewsfeedRequestDto requestDto) {

@@ -37,4 +37,11 @@ public class NewsfeedController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return newsfeedService.updateNewsfeed(id, requestDto, userDetails.getUser());
     }
+
+    @DeleteMapping("/{id}")
+    public Long deleteNewsfeed(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return newsfeedService.deleteNewsfeed(id, userDetails.getUser());
+    }
 }
