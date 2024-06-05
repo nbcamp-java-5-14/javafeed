@@ -57,5 +57,6 @@ public class User extends Timestamped {
         this.password = signupRequest.getPassword();
         this.name = signupRequest.getName();
         this.email = signupRequest.getEmail();
+        this.userStatus = UserStatus.ACTIVE;
     }
 }
