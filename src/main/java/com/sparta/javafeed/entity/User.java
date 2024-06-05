@@ -7,8 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +57,13 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime userStatusModifiedAt;
 
-    public User(SignupRequestDto signupRequest) {
+    public User(SignupRequestDto signupRequest, String encodedPassword) {
         this.accountId = signupRequest.getAccountId();
-        this.password = signupRequest.getPassword();
+        this.password = encodedPassword;
         this.name = signupRequest.getName();
         this.email = signupRequest.getEmail();
         this.userStatus = UserStatus.ACTIVE;
-
+        this.userRole = UserRole.USER;
     }
 
     public void saveRefreshToken(String refreshToken) {
