@@ -1,0 +1,53 @@
+### 회원가입
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "accountId": "test123456",
+  "password": "1q2w3e4r!@#$",
+  "name": "test",
+  "email": "test123@email.com"
+}
+
+### 로그인
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "accountId": "test123456",
+  "password": "1q2w3e4r!@#$"
+}
+
+> {%
+client.log(response.body.accessToken);
+client.global.set("accessToken", response.body.data.accessToken);
+client.global.set("refreshToken", response.body.data.refreshToken);
+%}
+
+### 회원 프로필 조회
+GET http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+
+### 회원 프로필 수정
+PUT http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "name": "updateName",
+  "email": "email123@email.com",
+  "intro": "intro"
+}
+
+### 회원 비밀번호 변경
+PATCH http://localhost:8080/users/password
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "1q2w3e4r!@#$",
+  "newPassword": "1qaz2wsx!@"
+}
