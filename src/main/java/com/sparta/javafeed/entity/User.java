@@ -1,6 +1,7 @@
 package com.sparta.javafeed.entity;
 
 import com.sparta.javafeed.dto.SignupRequestDto;
+import com.sparta.javafeed.dto.UserInfoRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,5 +66,11 @@ public class User {
         this.password = signupRequest.getPassword();
         this.name = signupRequest.getName();
         this.email = signupRequest.getEmail();
+    }
+
+    public void updateUserInfo(UserInfoRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.email = requestDto.getEmail();
+        this.intro = requestDto.getIntro();
     }
 }

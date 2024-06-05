@@ -1,16 +1,15 @@
 package com.sparta.javafeed.service;
 
-import com.sparta.javafeed.dto.ResponseStatus;
-import com.sparta.javafeed.dto.SignupRequestDto;
-import com.sparta.javafeed.dto.SignupResponseDto;
-import com.sparta.javafeed.dto.UserResponseDto;
-import com.sparta.javafeed.dto.SignupResponseWrapper;
+import com.sparta.javafeed.dto.*;
 import com.sparta.javafeed.entity.User;
+import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,12 +30,25 @@ public class UserService {
         return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
     }
 
-    public ResponseEntity<UserResponseDto> getUser(String username) {
-        // 임시
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
-        );
+    public ResponseEntity<UserInfoResponseDto> getUser(String username) {
+        User byAccountId = this.findByAccountId(username);
 
-        return new ResponseEntity<>(new UserResponseDto(user), HttpStatus.OK);
+        return new ResponseEntity<>(new UserInfoResponseDto(byAccountId), HttpStatus.OK);
     }
+
+    @Transactional
+    public ResponseEntity<?> updateUser(UserInfoRequestDto requestDto, String username) {
+        User byAccountId = this.findByAccountId(username);
+
+        byAccountId.updateUserInfo(requestDto);
+
+        return new ResponseEntity<>(new UserInfoResponseDto(byAccountId), HttpStatus.OK);
+    }
+
+    private User findByAccountId(String accountId){
+        return userRepository.findByAccountId(accountId).orElseThrow(
+                () -> new UserException(ErrorType.INVALID_ACCOUNT_ID)
+        );
+    }
+
 }
