@@ -102,15 +102,15 @@ public class UserService {
         }
     }
 
-    public UserInfoResponseDto getUser(String acocuntId) {
-        User byAccountId = this.findByAccountId(acocuntId);
+    public UserInfoResponseDto getUser(String accountId) {
+        User byAccountId = this.findByAccountId(accountId);
 
         return new UserInfoResponseDto(byAccountId);
     }
 
     @Transactional
-    public String updateUser(UserInfoRequestDto requestDto, String acocuntId) {
-        User byAccountId = this.findByAccountId(acocuntId);
+    public String updateUser(UserInfoRequestDto requestDto, String accountId) {
+        User byAccountId = this.findByAccountId(accountId);
 
         byAccountId.updateUserInfo(requestDto);
 
@@ -118,11 +118,17 @@ public class UserService {
     }
 
     @Transactional
-    public String updatePassword(PasswordUpdateDto requestDto, String acocuntId) {
-        User byAccountId = this.findByAccountId(acocuntId);
+    public String updatePassword(PasswordUpdateDto requestDto, String accountId) {
+        User byAccountId = this.findByAccountId(accountId);
 
+        // 기존 패스워드가 맞는지 확인
         if(!passwordEncoder.matches(requestDto.getCurrentPassword(), byAccountId.getPassword())){
             throw new UserException(ErrorType.INVALID_PASSWORD);
+        }
+
+        // 새로운 패스워드가 기존 패스워드와 같은지 확인
+        if (passwordEncoder.matches(requestDto.getNewPassword(), byAccountId.getPassword())) {
+            throw new UserException(ErrorType.DUPLICATE_PASSWORD);
         }
 
         String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
