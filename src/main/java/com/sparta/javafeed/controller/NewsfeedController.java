@@ -51,6 +51,6 @@ public class NewsfeedController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long responseId = newsfeedService.deleteNewsfeed(id, userDetails.getUser());
         ResponseEntityDto<Long> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_DELETE_SUCCESS, responseId);
-        return ResponseEntity.ok(responseEntity);;
+        return ResponseEntity.ok(responseEntity);
     }
 }
