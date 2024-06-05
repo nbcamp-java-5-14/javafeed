@@ -106,16 +106,14 @@ public class UserService {
     }
 
     @Transactional
-    public String updateUser(UserInfoRequestDto requestDto, String accountId) {
+    public void updateUser(UserInfoRequestDto requestDto, String accountId) {
         User byAccountId = this.findByAccountId(accountId);
 
         byAccountId.updateUserInfo(requestDto);
-
-        return "프로필이 수정되었습니다.";
     }
 
     @Transactional
-    public String updatePassword(PasswordUpdateDto requestDto, String accountId) {
+    public void updatePassword(PasswordUpdateDto requestDto, String accountId) {
         User byAccountId = this.findByAccountId(accountId);
 
         // 기존 패스워드가 맞는지 확인
@@ -131,10 +129,7 @@ public class UserService {
         String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
 
         byAccountId.updatePassword(encodedNewPassword);
-
-        return "비밀번호가 수정되었습니다.";
     }
-
 
     private User findByAccountId(String accountId){
         return userRepository.findByAccountId(accountId).orElseThrow(

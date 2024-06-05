@@ -67,14 +67,14 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateUser(@RequestBody @Valid UserInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        String message = userService.updateUser(requestDto, details.getUsername());
-        return new ResponseEntity<>(message, HttpStatus.OK);
+    public ResponseEntity<ResponseStatusDto> updateUser(@RequestBody @Valid UserInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        userService.updateUser(requestDto, details.getUsername());
+        return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PROFILE_UPDATE_SUCCESS));
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        String message = userService.updatePassword(requestDto, details.getUsername());
-        return new ResponseEntity<>(message, HttpStatus.OK);
+    public ResponseEntity<ResponseStatusDto> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        userService.updatePassword(requestDto, details.getUsername());
+        return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PASSWORD_UPDATE_SUCCESS));
     }
 }
