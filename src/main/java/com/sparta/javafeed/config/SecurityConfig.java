@@ -3,6 +3,7 @@ package com.sparta.javafeed.config;
 import com.sparta.javafeed.jwt.JwtAuthenticationFilter;
 import com.sparta.javafeed.jwt.JwtExceptionFilter;
 import com.sparta.javafeed.jwt.JwtUtil;
+import com.sparta.javafeed.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

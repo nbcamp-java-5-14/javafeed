@@ -17,6 +17,8 @@ import com.sparta.javafeed.jwt.JwtUtil;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @PostMapping
@@ -64,14 +67,14 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateUser(@RequestBody @Valid UserInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        String message = userService.updateUser(requestDto, details.getUsername());
-        return new ResponseEntity<>(message, HttpStatus.OK);
+    public ResponseEntity<ResponseStatusDto> updateUser(@RequestBody @Valid UserInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        userService.updateUser(requestDto, details.getUsername());
+        return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PROFILE_UPDATE_SUCCESS));
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
-        String message = userService.updatePassword(requestDto, details.getUsername());
-        return new ResponseEntity<>(message, HttpStatus.OK);
+    public ResponseEntity<ResponseStatusDto> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
+        userService.updatePassword(requestDto, details.getUsername());
+        return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PASSWORD_UPDATE_SUCCESS));
     }
 }
