@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 > {%
-client.log(response.body.accessToken);
+client.log(response.body.data.accessToken);
 client.global.set("accessToken", response.body.data.accessToken);
 client.global.set("refreshToken", response.body.data.refreshToken);
 %}
