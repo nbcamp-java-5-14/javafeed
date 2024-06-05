@@ -1,5 +1,6 @@
 package com.sparta.javafeed.controller;
 
+import com.sparta.javafeed.dto.ResponseStatus;
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.SignupResponseDto;
 import com.sparta.javafeed.dto.SignupResponseWrapper;
@@ -22,6 +23,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<SignupResponseWrapper> signupUser(@RequestBody @Valid SignupRequestDto signupRequest) {
 
-        return userService.signupUser(signupRequest);
+        SignupResponseDto responseDto = userService.signupUser(signupRequest);
+
+        ResponseStatus responseStatus = new ResponseStatus(HttpStatus.OK.value(), "회원가입에 성공하였습니다.");
+
+        SignupResponseWrapper responseWrapper = new SignupResponseWrapper(responseDto, responseStatus);
+
+        return new ResponseEntity<>(responseWrapper, HttpStatus.OK);
     }
 }
