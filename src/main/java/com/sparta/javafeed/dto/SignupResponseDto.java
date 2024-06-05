@@ -26,7 +26,7 @@ public class SignupResponseDto {
         this.password = user.getPassword();
         this.name = user.getName();
         this.intro = user.getIntro();
-        this.email = user.getIntro();
+        this.email = user.getEmail();
         this.userStatus = user.getUserStatus();
         this.refreshToken = user.getRefreshToken();
         this.createdAt = user.getCreatedAt();

@@ -38,15 +38,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String intro;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     // Eunm 값이 데이터가 숫자로 저장되기 때문에, 스트링으로 찍히도록 하기위함.
     private UserStatus userStatus;
 
-    @Column(nullable = false)
+    @Column
     private String refreshToken;
 
     @CreatedDate
