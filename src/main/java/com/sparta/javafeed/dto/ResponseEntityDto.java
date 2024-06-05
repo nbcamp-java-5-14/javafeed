@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class ResponseEntityDto<T> {
 
-    private String  status;
+    private String status;
     private String message;
     private T data;
 
