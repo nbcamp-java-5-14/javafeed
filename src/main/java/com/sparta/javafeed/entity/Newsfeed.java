@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Table(name="Newsfeed")
-public class Newsfeed {
+public class Newsfeed extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +26,4 @@ public class Newsfeed {
 
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String description;
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
 }
