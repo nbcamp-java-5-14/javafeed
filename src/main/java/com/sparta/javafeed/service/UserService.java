@@ -97,20 +97,36 @@ public class UserService {
         }
     }
 
-    public UserInfoResponseDto getUser(String username) {
-        User byAccountId = this.findByAccountId(username);
+    public UserInfoResponseDto getUser(String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
 
         return new UserInfoResponseDto(byAccountId);
     }
 
     @Transactional
-    public String updateUser(UserInfoRequestDto requestDto, String username) {
-        User byAccountId = this.findByAccountId(username);
+    public String updateUser(UserInfoRequestDto requestDto, String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
 
         byAccountId.updateUserInfo(requestDto);
 
         return "프로필이 수정되었습니다.";
     }
+
+    @Transactional
+    public String updatePassword(PasswordRequestDto requestDto, String acocuntId) {
+        User byAccountId = this.findByAccountId(acocuntId);
+
+        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), byAccountId.getPassword())){
+            throw new UserException(ErrorType.INVALID_PASSWORD);
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
+
+        byAccountId.updatePassword(encodedNewPassword);
+
+        return "비밀번호가 수정되었습니다.";
+    }
+
 
     private User findByAccountId(String accountId){
         return userRepository.findByAccountId(accountId).orElseThrow(
@@ -118,10 +134,5 @@ public class UserService {
         );
     }
 
-    public String updatePassword(PasswordRequestDto requestDto) {
 
-
-
-        return "비밀번호가 수정되었습니다.";
-    }
 }
