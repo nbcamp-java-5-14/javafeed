@@ -2,6 +2,7 @@ package com.sparta.javafeed.controller;
 
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.SignupResponseDto;
+import com.sparta.javafeed.dto.SignupResponseWrapper;
 import com.sparta.javafeed.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody @Valid SignupRequestDto signupRequest) {
+    public ResponseEntity<SignupResponseWrapper> signupUser(@RequestBody @Valid SignupRequestDto signupRequest) {
+
         return userService.signupUser(signupRequest);
     }
 }
