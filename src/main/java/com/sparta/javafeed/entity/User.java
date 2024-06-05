@@ -1,5 +1,7 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.enums.UserRole;
+import com.sparta.javafeed.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +46,10 @@ public class User {
     private UserStatus userStatus;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
+    @Column(nullable = false)
     private String refreshToken;
 
     @CreatedDate
@@ -56,4 +62,15 @@ public class User {
 
     @Column
     private LocalDateTime userStatusModifiedAt;
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public boolean checkRefreshToken(String refreshToken) {
+        if (this.refreshToken != null && refreshToken.equals(this.refreshToken)) {
+            return true;
+        }
+        return false;
+    }
 }
