@@ -5,10 +5,9 @@ import com.sparta.javafeed.dto.NewsfeedResponseDto;
 import com.sparta.javafeed.service.NewsfeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -20,6 +19,12 @@ public class NewsfeedController {
     @PostMapping
     public NewsfeedResponseDto createNewsfeed(
             @Valid @RequestBody NewsfeedRequestDto requestDto) {
+
         return newsfeedService.save(requestDto);
+    }
+
+    @GetMapping
+    public List<NewsfeedResponseDto> getNewsfeed() {
+        return newsfeedService.getNewsfeed();
     }
 }

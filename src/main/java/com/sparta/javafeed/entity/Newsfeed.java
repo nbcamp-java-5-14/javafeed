@@ -31,10 +31,12 @@ public class Newsfeed {
 
     @CreatedDate
     @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 
     public Newsfeed(String title, String description) {
