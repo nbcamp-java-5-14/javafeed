@@ -1,6 +1,8 @@
 package com.sparta.javafeed.jwt;
 
+import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserRole;
+import com.sparta.javafeed.exception.JwtCustomException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     setAuthentication(info.getSubject());
                 } catch (Exception e) {
                     log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
+                    throw new JwtCustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
                 }
             } else if (!jwtUtil.validateToken(accessToken) && !refreshToken.isEmpty()) {
                 if (jwtUtil.validateToken(refreshToken) && jwtUtil.existRefreshToken(refreshToken)) {
@@ -57,9 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         setAuthentication(info.getSubject());
                     } catch (Exception e) {
                         log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
+                        throw new JwtCustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
                     }
                 } else {
-                    throw new IOException("유효하지 않은 리프레시 토큰입니다. 다시 로그인 해주세요.");
+                    throw new JwtCustomException(ErrorType.INVALID_REFRESH_TOKEN);
                 }
             }
         }
