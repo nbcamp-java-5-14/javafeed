@@ -64,7 +64,7 @@ public class User extends Timestamped {
         this.name = signupRequest.getName();
         this.email = signupRequest.getEmail();
         this.userStatus = UserStatus.ACTIVE;
-
+        this.userRole = UserRole.USER;
     }
 
     public void saveRefreshToken(String refreshToken) {
