@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @Table(name="User")
 @NoArgsConstructor
-public class User {
+public class User extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,14 +48,6 @@ public class User {
 
     @Column
     private String refreshToken;
-
-    @CreatedDate
-    @Column
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime modifiedAt;
 
     @Column
     private LocalDateTime userStatusModifiedAt;
