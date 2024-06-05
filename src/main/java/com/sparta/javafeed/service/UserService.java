@@ -8,6 +8,7 @@ import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -35,6 +36,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+
     public SignupResponseDto signupUser(SignupRequestDto signupRequest) {
         // 아이디 중복 검증 로직
         Optional<User> checkAccountId = userRepository.findByAccountId(signupRequest.getAccountId());
@@ -48,7 +51,10 @@ public class UserService {
             throw new UserException(ErrorType.DUPLICATE_EMAIL);
         }
 
-        User user = new User(signupRequest);
+
+        String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
+
+        User user = new User(signupRequest, encodedPassword);
 
         userRepository.save(user);
 
