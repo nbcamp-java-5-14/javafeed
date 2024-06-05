@@ -1,5 +1,7 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.enums.UserRole;
+import com.sparta.javafeed.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +45,10 @@ public class User {
     // Eunm 값이 데이터가 숫자로 저장되기 때문에, 스트링으로 찍히도록 하기위함.
     private UserStatus userStatus;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     @Column
     private String refreshToken;
 
@@ -56,4 +62,15 @@ public class User {
 
     @Column
     private LocalDateTime userStatusModifiedAt;
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public boolean checkRefreshToken(String refreshToken) {
+        if (this.refreshToken != null && refreshToken.equals(this.refreshToken)) {
+            return true;
+        }
+        return false;
+    }
 }
