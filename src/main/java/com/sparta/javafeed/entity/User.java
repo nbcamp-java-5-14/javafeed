@@ -37,7 +37,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String intro;
 
     @Column(nullable = false)
@@ -49,7 +49,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @Column(nullable = false)
+    @Column
     private String refreshToken;
 
     @CreatedDate
