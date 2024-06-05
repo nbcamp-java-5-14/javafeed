@@ -70,6 +70,7 @@ public class User extends Timestamped {
 
     public void deactiveUser(UserStatus userStatus) {
         this.userStatus = userStatus;
+        this.userStatusModifiedAt = LocalDateTime.now();
     }
 
     public void saveRefreshToken(String refreshToken) {
