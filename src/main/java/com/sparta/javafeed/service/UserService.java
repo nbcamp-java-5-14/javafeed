@@ -88,19 +88,19 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<UserInfoResponseDto> getUser(String username) {
+    public UserInfoResponseDto getUser(String username) {
         User byAccountId = this.findByAccountId(username);
 
-        return new ResponseEntity<>(new UserInfoResponseDto(byAccountId), HttpStatus.OK);
+        return new UserInfoResponseDto(byAccountId);
     }
 
     @Transactional
-    public ResponseEntity<?> updateUser(UserInfoRequestDto requestDto, String username) {
+    public String updateUser(UserInfoRequestDto requestDto, String username) {
         User byAccountId = this.findByAccountId(username);
 
         byAccountId.updateUserInfo(requestDto);
 
-        return new ResponseEntity<>(new UserInfoResponseDto(byAccountId), HttpStatus.OK);
+        return "프로필이 수정되었습니다.";
     }
 
     private User findByAccountId(String accountId){
@@ -109,4 +109,10 @@ public class UserService {
         );
     }
 
+    public String updatePassword(PasswordRequestDto requestDto) {
+
+
+
+        return "비밀번호가 수정되었습니다.";
+    }
 }
