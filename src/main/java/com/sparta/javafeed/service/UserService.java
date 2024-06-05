@@ -1,18 +1,15 @@
 package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.*;
-import com.sparta.javafeed.dto.ExceptionDto;
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.SignupResponseDto;
 
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -22,21 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import com.sparta.javafeed.dto.LoginRequestDto;
 import com.sparta.javafeed.dto.LoginResponseDto;
-import com.sparta.javafeed.entity.User;
-import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserRole;
-import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.jwt.JwtUtil;
-import com.sparta.javafeed.repository.UserRepository;
 import com.sparta.javafeed.security.UserDetailsImpl;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +49,6 @@ public class UserService {
             throw new UserException(ErrorType.DUPLICATE_EMAIL);
         }
 
-
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         User user = new User(signupRequest, encodedPassword);
@@ -67,6 +56,22 @@ public class UserService {
         userRepository.save(user);
 
         return new SignupResponseDto(user);
+    }
+
+    @Transactional
+    public void deactiveUser(PasswordReqeustDto passwordRequest, String accountId) {
+        User userByAccountId = this.findByAccountId(accountId);
+        //기존 탈퇴 회원 검증 로직
+        if (userByAccountId.getUserStatus().equals(UserStatus.DEACTIVATE)) {
+            throw new UserException(ErrorType.DEACTIVATE_USER);
+        }
+
+        //비밀번호 확인 검증 로직
+        if (!passwordEncoder.matches(passwordRequest.getPassword(), userByAccountId.getPassword())) {
+            throw new UserException(ErrorType.INVALID_PASSWORD);
+        }
+
+        userByAccountId.deactiveUser(UserStatus.DEACTIVATE);
     }
 
     @Transactional
@@ -113,7 +118,7 @@ public class UserService {
     }
 
     @Transactional
-    public String updatePassword(PasswordRequestDto requestDto, String acocuntId) {
+    public String updatePassword(PasswordUpdateDto requestDto, String acocuntId) {
         User byAccountId = this.findByAccountId(acocuntId);
 
         if(!passwordEncoder.matches(requestDto.getCurrentPassword(), byAccountId.getPassword())){
@@ -133,6 +138,4 @@ public class UserService {
                 () -> new UserException(ErrorType.INVALID_ACCOUNT_ID)
         );
     }
-
-
 }
