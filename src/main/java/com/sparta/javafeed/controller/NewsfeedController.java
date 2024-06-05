@@ -3,6 +3,7 @@ package com.sparta.javafeed.controller;
 import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import com.sparta.javafeed.dto.NewsfeedResponseDto;
 import com.sparta.javafeed.dto.ResponseEntityDto;
+import com.sparta.javafeed.dto.ResponseStatusDto;
 import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import com.sparta.javafeed.service.NewsfeedService;
@@ -41,7 +42,7 @@ public class NewsfeedController {
             @RequestBody NewsfeedRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long responseId = newsfeedService.updateNewsfeed(id, requestDto, userDetails.getUser());
-        ResponseEntityDto<Long> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_UPDATE_SUCCESS, responseId);
+        ResponseStatusDto responseEntity = new ResponseStatusDto(ResponseStatus.POST_UPDATE_SUCCESS);
         return ResponseEntity.ok(responseEntity);
     }
 
@@ -50,7 +51,7 @@ public class NewsfeedController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long responseId = newsfeedService.deleteNewsfeed(id, userDetails.getUser());
-        ResponseEntityDto<Long> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_DELETE_SUCCESS, responseId);
+        ResponseStatusDto responseEntity = new ResponseStatusDto(ResponseStatus.POST_DELETE_SUCCESS);
         return ResponseEntity.ok(responseEntity);
     }
 }
