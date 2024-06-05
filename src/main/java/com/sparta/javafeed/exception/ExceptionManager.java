@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionManager {
     // 핸들러 패키지에 넣어야한다.
 
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<?> handleScheduleException(UserException e) {
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleScheduleException(CustomException e) {
         e.printStackTrace();
         return ResponseEntity.status(e.getErrorType().getHttpStatus()).body(new ExceptionDto(e.getErrorType()));
     }

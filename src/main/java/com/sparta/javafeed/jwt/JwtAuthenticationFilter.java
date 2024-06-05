@@ -2,7 +2,7 @@ package com.sparta.javafeed.jwt;
 
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserRole;
-import com.sparta.javafeed.exception.JwtCustomException;
+import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -45,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     setAuthentication(info.getSubject());
                 } catch (Exception e) {
                     log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
-                    throw new JwtCustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
+                    throw new CustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
                 }
             } else if (!jwtUtil.validateToken(accessToken) && !refreshToken.isEmpty()) {
                 if (jwtUtil.validateToken(refreshToken) && jwtUtil.existRefreshToken(refreshToken)) {
@@ -61,10 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         setAuthentication(info.getSubject());
                     } catch (Exception e) {
                         log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
-                        throw new JwtCustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
+                        throw new CustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
                     }
                 } else {
-                    throw new JwtCustomException(ErrorType.INVALID_REFRESH_TOKEN);
+                    throw new CustomException(ErrorType.INVALID_REFRESH_TOKEN);
                 }
             }
         }

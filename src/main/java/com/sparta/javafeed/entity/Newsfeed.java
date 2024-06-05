@@ -3,7 +3,7 @@ package com.sparta.javafeed.entity;
 import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserRole;
-import com.sparta.javafeed.exception.UserException;
+import com.sparta.javafeed.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,7 +57,7 @@ public class Newsfeed extends Timestamped {
 
     public void userValidate(User user) {
         if(user.getUserRole() == UserRole.USER && !this.user.getName().equals(user.getName())) {
-            throw new UserException(ErrorType.NO_AUTHENTICATION);
+            throw new CustomException(ErrorType.NO_AUTHENTICATION);
         }
     }
 }

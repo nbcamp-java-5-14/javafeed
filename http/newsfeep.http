@@ -15,7 +15,7 @@ Content-Type: application/json
 
 ### 게시글 생성
 POST http://localhost:8080/posts
-accessToken: {{accessToken}}
+accessToken: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTIzNDU2IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc1OTEyMzEsImlhdCI6MTcxNzU4NzYzMX0.FNL_kGhb7wYzyYAfNxdzYV4yG_WAG0eX7dmjGGJd8Xe
 refreshToken: {{refreshToken}}
 Content-Type: application/json
 

@@ -1,8 +1,9 @@
 package com.sparta.javafeed.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.javafeed.dto.ExceptionDto;
 import com.sparta.javafeed.enums.ErrorType;
-import com.sparta.javafeed.exception.JwtCustomException;
+import com.sparta.javafeed.exception.CustomException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +22,9 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response); // JwtAuthenticationFilter 실행
         } catch (Exception e) {
-            if (e instanceof JwtCustomException) {
-                JwtCustomException jwtCustomException = (JwtCustomException) e;
-                hadleAuthenticationException(response, jwtCustomException.getErrorType());
+            if (e instanceof CustomException) {
+                CustomException CustomException = (CustomException) e;
+                hadleAuthenticationException(response, CustomException.getErrorType());
             }
         }
     }
@@ -32,7 +33,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(errorType));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ExceptionDto(errorType)));
         response.getWriter().flush();
     }
 }

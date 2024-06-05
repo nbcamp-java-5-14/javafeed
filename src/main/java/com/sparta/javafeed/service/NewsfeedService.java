@@ -4,6 +4,8 @@ import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import com.sparta.javafeed.dto.NewsfeedResponseDto;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
+import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.NewsfeedRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,7 @@ public class NewsfeedService {
 
     private Newsfeed checkValidatedNewsfeed(Long id, User user) {
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                new CustomException(ErrorType.NOT_FOUNT_POST));
 
         newsfeed.userValidate(user);
 
