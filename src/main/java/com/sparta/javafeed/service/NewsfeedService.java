@@ -4,9 +4,6 @@ import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import com.sparta.javafeed.dto.NewsfeedResponseDto;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
-import com.sparta.javafeed.enums.ErrorType;
-import com.sparta.javafeed.enums.UserRole;
-import com.sparta.javafeed.exception.UserException;
 import com.sparta.javafeed.repository.NewsfeedRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +32,7 @@ public class NewsfeedService {
 
     @Transactional
     public Long updateNewsfeed(Long id, NewsfeedRequestDto requestDto, User user) {
-        Newsfeed newsfeed = checkValidatedNewfeed(id, user);
+        Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
         newsfeed.update(requestDto);
         return newsfeed.getId();
 
@@ -43,21 +40,16 @@ public class NewsfeedService {
 
     @Transactional
     public Long deleteNewsfeed(Long id, User user) {
-        Newsfeed newsfeed = checkValidatedNewfeed(id, user);
+        Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
         newsfeedRepository.delete(newsfeed);
         return newsfeed.getId();
     }
 
-    private Newsfeed checkValidatedNewfeed(Long id, User user) {
-        Newsfeed newsfeed;
+    private Newsfeed checkValidatedNewsfeed(Long id, User user) {
+        Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        if(user.getUserRole().equals(UserRole.ADMIN)) {
-            newsfeed = newsfeedRepository.findById(id).orElseThrow(() ->
-                    new IllegalArgumentException("게시물을 찾을 수 없습니다."));
-        } else {
-            newsfeed = newsfeedRepository.findByIdAndUserId(id, user.getId()).orElseThrow(() ->
-                    new UserException(ErrorType.NO_AUTHENTICATION));
-        }
+        newsfeed.userValidate(user);
 
         return newsfeed;
     }
