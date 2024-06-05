@@ -1,5 +1,6 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,8 +40,14 @@ public class Newsfeed {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 
-    public Newsfeed(String title, String description) {
+    public Newsfeed(String title, String description, User user) {
         this.title = title;
         this.description = description;
+        this.user = user;
+    }
+
+    public void update(NewsfeedRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.description = requestDto.getDescription();
     }
 }
