@@ -1,7 +1,7 @@
 package com.sparta.javafeed.dto;
 
 import com.sparta.javafeed.entity.User;
-import com.sparta.javafeed.entity.UserStatus;
+import com.sparta.javafeed.enums.UserStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

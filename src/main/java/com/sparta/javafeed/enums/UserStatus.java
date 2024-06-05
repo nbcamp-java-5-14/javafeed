@@ -1,4 +1,4 @@
-package com.sparta.javafeed.entity;
+package com.sparta.javafeed.enums;
 
 public enum UserStatus {
     ACTIVE,
