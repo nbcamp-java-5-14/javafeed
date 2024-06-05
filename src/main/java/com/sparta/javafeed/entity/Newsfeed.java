@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name="Newsfeed")
-public class Newsfeed {
+public class Newsfeed extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class Newsfeed {
         this.title = title;
         this.description = description;
         this.user = user;
-        this.user.getNewsfeeds().add(this);
+//        this.user.getNewsfeeds().add(this);
     }
 
     public void update(NewsfeedRequestDto requestDto) {

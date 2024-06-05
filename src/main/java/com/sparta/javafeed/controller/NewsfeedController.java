@@ -2,10 +2,13 @@ package com.sparta.javafeed.controller;
 
 import com.sparta.javafeed.dto.NewsfeedRequestDto;
 import com.sparta.javafeed.dto.NewsfeedResponseDto;
+import com.sparta.javafeed.dto.ResponseEntityDto;
+import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import com.sparta.javafeed.service.NewsfeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +22,12 @@ public class NewsfeedController {
     private final NewsfeedService newsfeedService;
 
     @PostMapping
-    public NewsfeedResponseDto createNewsfeed(
+    public ResponseEntity<?> createNewsfeed(
             @Valid @RequestBody NewsfeedRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return newsfeedService.save(requestDto, userDetails.getUser());
+        NewsfeedResponseDto responseDto = newsfeedService.save(requestDto, userDetails.getUser());
+        ResponseEntityDto<NewsfeedResponseDto> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_CREATE_SUCCESS, responseDto);
+        return ResponseEntity.ok(responseEntity);
     }
 
     @GetMapping
@@ -31,17 +36,21 @@ public class NewsfeedController {
     }
 
     @PutMapping("/{id}")
-    public Long updateNewsfeed(
+    public ResponseEntity<?> updateNewsfeed(
             @PathVariable Long id,
             @RequestBody NewsfeedRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return newsfeedService.updateNewsfeed(id, requestDto, userDetails.getUser());
+        Long responseId = newsfeedService.updateNewsfeed(id, requestDto, userDetails.getUser());
+        ResponseEntityDto<Long> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_UPDATE_SUCCESS, responseId);
+        return ResponseEntity.ok(responseEntity);
     }
 
     @DeleteMapping("/{id}")
-    public Long deleteNewsfeed(
+    public ResponseEntity<?> deleteNewsfeed(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return newsfeedService.deleteNewsfeed(id, userDetails.getUser());
+        Long responseId = newsfeedService.deleteNewsfeed(id, userDetails.getUser());
+        ResponseEntityDto<Long> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_DELETE_SUCCESS, responseId);
+        return ResponseEntity.ok(responseEntity);;
     }
 }
