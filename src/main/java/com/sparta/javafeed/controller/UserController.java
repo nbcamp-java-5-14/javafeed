@@ -13,17 +13,13 @@ import com.sparta.javafeed.dto.LoginRequestDto;
 import com.sparta.javafeed.dto.LoginResponseDto;
 import com.sparta.javafeed.dto.ResponseEntityDto;
 
-import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.jwt.JwtUtil;
 import com.sparta.javafeed.security.UserDetailsImpl;
-import com.sparta.javafeed.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,6 +36,13 @@ public class UserController {
         ResponseEntityDto<SignupResponseDto> responseEntity = new ResponseEntityDto<>(ResponseStatus.SIGN_UP_SUCCESS, responseDto);
 
         return ResponseEntity.ok(responseEntity);
+    }
+
+    @PatchMapping
+    public ResponseEntity<ResponseStatusDto> deactiveUser(@RequestBody PasswordReqeustDto passwordRequest, @AuthenticationPrincipal UserDetailsImpl details) {
+        userService.deactiveUser(passwordRequest, details.getUser().getAccountId());
+        ResponseStatusDto responseStatusDto = new ResponseStatusDto((ResponseStatus.DEACTIVATE_USER_SUCCESS));
+        return new ResponseEntity<>(responseStatusDto, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/login")
@@ -67,7 +70,7 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
+    public ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
         String message = userService.updatePassword(requestDto, details.getUsername());
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

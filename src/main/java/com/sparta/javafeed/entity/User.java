@@ -1,5 +1,6 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.dto.PasswordReqeustDto;
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.UserInfoRequestDto;
 import com.sparta.javafeed.enums.UserRole;
@@ -65,6 +66,10 @@ public class User extends Timestamped {
         this.email = signupRequest.getEmail();
         this.userStatus = UserStatus.ACTIVE;
         this.userRole = UserRole.USER;
+    }
+
+    public void deactiveUser(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 
     public void saveRefreshToken(String refreshToken) {
