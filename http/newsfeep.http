@@ -8,14 +8,15 @@ Content-Type: application/json
 }
 
 > {%
-    client.log(response.body.data.accessToken);
-    client.global.set("accessToken", response.body.data.accessToken);
-    client.global.set("refreshToken", response.body.data.refreshToken);
+    client.log(response.headers.valueOf("accessToken"));
+    client.log(response.headers.valueOf("refreshToken"));
+    client.global.set("accessToken", response.headers.valueOf("accessToken"));
+    client.global.set("refreshToken", response.headers.valueOf("refreshToken"));
 %}
 
 ### 게시글 생성
 POST http://localhost:8080/posts
-accessToken: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MTIzNDU2IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTc1OTEyMzEsImlhdCI6MTcxNzU4NzYzMX0.FNL_kGhb7wYzyYAfNxdzYV4yG_WAG0eX7dmjGGJd8Xe
+accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
 Content-Type: application/json
 

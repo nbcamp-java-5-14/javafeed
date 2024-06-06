@@ -19,10 +19,22 @@ Content-Type: application/json
 }
 
 > {%
-client.log(response.body.data.accessToken);
-client.global.set("accessToken", response.body.data.accessToken);
-client.global.set("refreshToken", response.body.data.refreshToken);
+client.log(response.headers.valueOf("accessToken"));
+client.log(response.headers.valueOf("refreshToken"));
+client.global.set("accessToken", response.headers.valueOf("accessToken"));
+client.global.set("refreshToken", response.headers.valueOf("refreshToken"));
 %}
+
+### 로그아웃
+POST http://localhost:8080/users/logout
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+
+> {%
+    client.global.clear("accessToken");
+    client.global.clear("refreshToken");
+%}
+
 
 ### 회원 프로필 조회
 GET http://localhost:8080/users
