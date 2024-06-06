@@ -21,22 +21,31 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j(topic = "JwtUtil")
 public class JwtUtil {
 
+    // access 토큰 헤더
     public static final String AUTH_ACCESS_HEADER = "AccessToken";
+    // refresh 토큰 헤더
     public static final String AUTH_REFRESH_HEADER = "RefreshToken";
+    // 사용자 권한
     public static final String AUTHORIZATION_KEY = "auth";
+    // 토큰 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000L;
-    private final long REFRESH_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;
+    // access 토큰 만료 시간 (30분)
+    private final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;
+    // refresh 토큰 만료 시간 (2주)
+    private final long REFRESH_TOKEN_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000L;
+    // 로그아웃 refresh 토큰 블랙리스트
+    private Set<String> blacklist = ConcurrentHashMap.newKeySet();
 
     @Value("${jwt.secret.key}")
     private String secretKey;
-
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -90,6 +99,9 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token) {
+        if (isblacklistToken(token)) {
+            throw new CustomException(ErrorType.LOGGED_OUT_TOKEN);
+        }
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -121,5 +133,13 @@ public class JwtUtil {
 
     public void setHeaderAccessToken(HttpServletResponse response, String newAccessToken) {
         response.setHeader(AUTH_ACCESS_HEADER, newAccessToken);
+    }
+
+    public void addBlacklistToken(String token) {
+        blacklist.add(token);
+    }
+
+    private boolean isblacklistToken(String token) {
+        return blacklist.contains(token);
     }
 }

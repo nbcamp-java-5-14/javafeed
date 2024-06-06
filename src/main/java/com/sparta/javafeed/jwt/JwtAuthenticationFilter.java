@@ -1,88 +1,91 @@
 package com.sparta.javafeed.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.javafeed.dto.ExceptionDto;
+import com.sparta.javafeed.dto.LoginRequestDto;
+import com.sparta.javafeed.dto.ResponseStatusDto;
+import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.enums.UserRole;
-import com.sparta.javafeed.exception.CustomException;
-import com.sparta.javafeed.security.UserDetailsServiceImpl;
-import io.jsonwebtoken.Claims;
+import com.sparta.javafeed.repository.UserRepository;
+import com.sparta.javafeed.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
 
-@Slf4j(topic = "JWT 검증 및 인가")
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+@Slf4j(topic = "로그인 및 JWT 생성")
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+        this.userRepository = userRepository;
+        setFilterProcessesUrl("/users/login");
+    }
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserRepository userRepository) {
+        super(authenticationManager);
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
-        String refreshToken = jwtUtil.getRefreshTokenFromHeader(request);
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 
-        if (StringUtils.hasText(accessToken)) {
-            if (jwtUtil.validateToken(accessToken)) {
-                Claims info = jwtUtil.getUserInfoFromToken(accessToken);
-
-                try {
-                    setAuthentication(info.getSubject());
-                } catch (Exception e) {
-                    log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
-                    throw new CustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
-                }
-            } else if (!jwtUtil.validateToken(accessToken) && !refreshToken.isEmpty()) {
-                if (jwtUtil.validateToken(refreshToken) && jwtUtil.existRefreshToken(refreshToken)) {
-                    Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
-
-                    UserRole role = UserRole.valueOf(info.get("role").toString());
-
-                    String newAccessToken = jwtUtil.createToken(info.getSubject(), role);
-
-                    jwtUtil.setHeaderAccessToken(response, newAccessToken);
-
-                    try {
-                        setAuthentication(info.getSubject());
-                    } catch (Exception e) {
-                        log.error("username = {}, message = {}", info.getSubject(), "인증 정보를 찾을 수 없습니다.");
-                        throw new CustomException(ErrorType.NOT_FOUND_AUTHENTICATION_INFO);
-                    }
-                } else {
-                    throw new CustomException(ErrorType.INVALID_REFRESH_TOKEN);
-                }
-            }
+            return getAuthenticationManager().authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            requestDto.getAccountId(),
+                            requestDto.getPassword(),
+                            null
+                    )
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        filterChain.doFilter(request, response);
     }
 
-    // 인증 처리
-    private void setAuthentication(String accountId) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(accountId);
-        context.setAuthentication(authentication);
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
+        String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
+        UserRole role = ((UserDetailsImpl) auth.getPrincipal()).getUser().getUserRole();
 
-        SecurityContextHolder.setContext(context);
+        String accessToken = jwtUtil.createToken(username, role);
+        String refreshToken = jwtUtil.createRefreshToken(username, role);
+
+        User user = ((UserDetailsImpl) auth.getPrincipal()).getUser();
+        user.saveRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        response.addHeader(JwtUtil.AUTH_ACCESS_HEADER, accessToken);
+        response.addHeader(JwtUtil.AUTH_REFRESH_HEADER, refreshToken);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseStatusDto(ResponseStatus.LOGIN_SUCCESS)));
+        response.getWriter().flush();
     }
 
-    // 인증 객체 생성
-    private Authentication createAuthentication(String accountId) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(accountId);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        ErrorType errorType = ErrorType.NOT_FOUND_AUTHENTICATION_INFO;
+        response.setStatus(errorType.getHttpStatus().value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ExceptionDto(errorType)));
+        response.getWriter().flush();
     }
 }

@@ -2,20 +2,12 @@ package com.sparta.javafeed.controller;
 
 
 import com.sparta.javafeed.dto.*;
-
-import com.sparta.javafeed.dto.SignupRequestDto;
-import com.sparta.javafeed.dto.SignupResponseDto;
 import com.sparta.javafeed.enums.ResponseStatus;
-import com.sparta.javafeed.service.UserService;
-import jakarta.validation.Valid;
-
-import com.sparta.javafeed.dto.LoginRequestDto;
-import com.sparta.javafeed.dto.LoginResponseDto;
-import com.sparta.javafeed.dto.ResponseEntityDto;
-
 import com.sparta.javafeed.jwt.JwtUtil;
 import com.sparta.javafeed.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletResponse;
+import com.sparta.javafeed.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +23,13 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
+    /**
+     * 회원가입
+     * @param signupRequest 회원가입 정보
+     * @return 회원 정보, 응답 상태
+     */
     @PostMapping
     public ResponseEntity<?> signupUser(@RequestBody @Valid SignupRequestDto signupRequest) {
         SignupResponseDto responseDto = userService.signupUser(signupRequest);
@@ -41,6 +39,12 @@ public class UserController {
         return ResponseEntity.ok(responseEntity);
     }
 
+    /**
+     * 회원 상태 비활성화
+     * @param passwordRequest 비밀번호
+     * @param details 회원 정보
+     * @return 응답 상태
+     */
     @PatchMapping
     public ResponseEntity<ResponseStatusDto> deactiveUser(@RequestBody PasswordReqeustDto passwordRequest, @AuthenticationPrincipal UserDetailsImpl details) {
         userService.deactiveUser(passwordRequest, details.getUser().getAccountId());
@@ -48,30 +52,51 @@ public class UserController {
         return new ResponseEntity<>(responseStatusDto, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login (HttpServletResponse response, @RequestBody LoginRequestDto requestDto){
-        LoginResponseDto responseDto = userService.login(requestDto);
+    /**
+     * 로그아웃
+     * @param details 회원 정보
+     * @param request 요청 객체
+     * @return 응답 상태
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetailsImpl details, HttpServletRequest request) {
+        String accessToken = jwtUtil.getAccessTokenFromHeader(request);
+        String refreshToken = jwtUtil.getRefreshTokenFromHeader(request);
 
-        response.addHeader(JwtUtil.AUTH_ACCESS_HEADER, responseDto.getAccessToken());
-        response.addHeader(JwtUtil.AUTH_REFRESH_HEADER, responseDto.getRefreshToken());
+        userService.loout(details.getUser(), accessToken, refreshToken);
 
-        ResponseEntityDto<LoginResponseDto> responseEntity = new ResponseEntityDto<>(ResponseStatus.LOGIN_SUCCESS, responseDto);
-
-        return ResponseEntity.ok(responseEntity);
+        return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.LOGOUT_SUCCESS));
     }
 
+    /**
+     * 회원 상세정보 조회
+     * @param details 회원 정보
+     * @return 회원 정보
+     */
     @GetMapping
     public ResponseEntity<UserInfoResponseDto> getUser(@AuthenticationPrincipal UserDetailsImpl details){
         UserInfoResponseDto userInfoResponseDto = userService.getUser(details.getUsername());
         return new ResponseEntity<>(userInfoResponseDto, HttpStatus.OK);
     }
 
+    /**
+     * 회원 정보 수정
+     * @param requestDto 수정 정보
+     * @param details 회원 정보
+     * @return 응답 상태
+     */
     @PutMapping
     public ResponseEntity<ResponseStatusDto> updateUser(@RequestBody @Valid UserInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
         userService.updateUser(requestDto, details.getUsername());
         return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PROFILE_UPDATE_SUCCESS));
     }
 
+    /**
+     * 회원 비밀번호 변경
+     * @param requestDto 비밀번호
+     * @param details 회원 정보
+     * @return 응답 상태
+     */
     @PatchMapping("/password")
     public ResponseEntity<ResponseStatusDto> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
         userService.updatePassword(requestDto, details.getUsername());

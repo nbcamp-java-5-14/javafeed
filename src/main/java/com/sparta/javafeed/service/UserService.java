@@ -1,35 +1,33 @@
 package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.*;
-import com.sparta.javafeed.dto.SignupRequestDto;
-import com.sparta.javafeed.dto.SignupResponseDto;
-
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.CustomException;
+import com.sparta.javafeed.jwt.JwtUtil;
 import com.sparta.javafeed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import com.sparta.javafeed.dto.LoginRequestDto;
-import com.sparta.javafeed.dto.LoginResponseDto;
-import com.sparta.javafeed.jwt.JwtUtil;
-import org.springframework.security.authentication.AuthenticationManager;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 회원가입
+     * @param signupRequest 회원가입 정보
+     * @return 회원 정보
+     */
     public SignupResponseDto signupUser(SignupRequestDto signupRequest) {
         // 아이디 중복 검증 로직
         Optional<User> checkAccountId = userRepository.findByAccountId(signupRequest.getAccountId());
@@ -53,6 +51,11 @@ public class UserService {
         return new SignupResponseDto(user);
     }
 
+    /**
+     * 회원 상태 비활성화
+     * @param passwordRequest 비밀번호
+     * @param accountId 회원 ID
+     */
     @Transactional
     public void deactiveUser(PasswordReqeustDto passwordRequest, String accountId) {
         User userByAccountId = this.findByAccountId(accountId);
@@ -69,25 +72,22 @@ public class UserService {
         userByAccountId.deactiveUser(UserStatus.DEACTIVATE);
     }
 
-    @Transactional
-    public LoginResponseDto login(LoginRequestDto requestDto) {
-        User user = userRepository.findByAccountId(requestDto.getAccountId()).orElseThrow(
-                ()-> new CustomException(ErrorType.NOT_FOUND_USER));
-
-        String accessToken = jwtUtil.createToken(user.getAccountId(), user.getUserRole());
-        String refreshToken = jwtUtil.createRefreshToken(user.getAccountId(), user.getUserRole());
-
-        user.saveRefreshToken(refreshToken.substring(7));
-
-        return new LoginResponseDto(user.getAccountId(), accessToken, refreshToken);
-    }
-
+    /**
+     * 회원 상세정보 조회
+     * @param accountId 회원 ID
+     * @return 회원 정보
+     */
     public UserInfoResponseDto getUser(String accountId) {
         User byAccountId = this.findByAccountId(accountId);
 
         return new UserInfoResponseDto(byAccountId);
     }
 
+    /**
+     * 회원 정보 수정
+     * @param requestDto 수정 정보
+     * @param accountId 회원 ID
+     */
     @Transactional
     public void updateUser(UserInfoRequestDto requestDto, String accountId) {
         User byAccountId = this.findByAccountId(accountId);
@@ -95,6 +95,11 @@ public class UserService {
         byAccountId.updateUserInfo(requestDto);
     }
 
+    /**
+     * 회원 비밀번호 변경
+     * @param requestDto 비밀번호
+     * @param accountId 회원 ID
+     */
     @Transactional
     public void updatePassword(PasswordUpdateDto requestDto, String accountId) {
         User byAccountId = this.findByAccountId(accountId);
@@ -114,11 +119,36 @@ public class UserService {
         byAccountId.updatePassword(encodedNewPassword);
     }
 
+    /**
+     * 로그아웃
+     * @param user 회원 정보
+     * @param accessToken 토큰
+     * @param refreshToken 토큰
+     */
+    @Transactional
+    public void loout(User user, String accessToken, String refreshToken) {
+        if (user==null) {
+            throw new CustomException(ErrorType.LOGGED_OUT_TOKEN);
+        }
+        User user2 = userRepository.findByAccountId(user.getAccountId()).orElseThrow(
+                ()-> new CustomException(ErrorType.NOT_FOUND_USER));
+
+        // 회원 refresh 토큰 초기화
+        user2.saveRefreshToken("");
+
+        // 블랙리스트 추가
+        jwtUtil.addBlacklistToken(accessToken);
+        jwtUtil.addBlacklistToken(refreshToken);
+    }
+
+    /**
+     * 회원 Entity 조회
+     * @param accountId 회원 ID
+     * @return 회원 Entity
+     */
     private User findByAccountId(String accountId){
         return userRepository.findByAccountId(accountId).orElseThrow(
                 () -> new CustomException(ErrorType.INVALID_ACCOUNT_ID)
         );
     }
-
-
 }
