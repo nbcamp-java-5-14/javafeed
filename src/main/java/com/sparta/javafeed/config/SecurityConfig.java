@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/posts").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll() // Swagger 경로 허용
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
