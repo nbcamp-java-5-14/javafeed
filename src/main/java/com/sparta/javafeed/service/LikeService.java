@@ -64,7 +64,7 @@ public class LikeService {
             }
 
             Like like = new Like(userByAccountId, commentById.getId(), ContentType.COMMENT);
-            commentById.addLikeCnt();
+            commentById.increaseLikeCnt();
             likeRepository.save(like);
         }
     }
@@ -82,6 +82,12 @@ public class LikeService {
         // 요청하는 유저와 좋아요 유저가 같은지 확인
         if(!like.getUser().getId().equals(userByAccountId.getId())){
             throw new CustomException(ErrorType.NO_AUTHENTICATION);
+        }
+
+        // 댓글 좋아요 카운트 내리기
+        if (like.getContentType() == ContentType.COMMENT){
+            Comment comment = commentService.getComment(like.getContentId());
+            comment.decreaseLikeCnt();
         }
 
         likeRepository.delete(like);
