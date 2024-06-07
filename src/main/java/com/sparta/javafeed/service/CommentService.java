@@ -98,4 +98,10 @@ public class CommentService {
 
         return comment;
     }
+
+    public Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                ()-> new CustomException(ErrorType.NOT_FOUND_COMMENT)
+        );
+    }
 }
