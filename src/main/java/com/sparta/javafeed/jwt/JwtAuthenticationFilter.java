@@ -8,6 +8,8 @@ import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.enums.UserRole;
+import com.sparta.javafeed.enums.UserStatus;
+import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.UserRepository;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -56,6 +58,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // 로그인 성공 처리
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
+        User user2 = ((UserDetailsImpl) auth.getPrincipal()).getUser();
+        if (UserStatus.DEACTIVATE.equals(user2.getUserStatus())) {
+            throw new CustomException(ErrorType.DEACTIVATE_USER);
+        }
+
         String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
         UserRole role = ((UserDetailsImpl) auth.getPrincipal()).getUser().getUserRole();
 
