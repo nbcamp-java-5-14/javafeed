@@ -30,7 +30,7 @@ public class LikeService {
         ContentType contentType = ContentType.toContentType(requestDto.getContentType().toUpperCase());
         if(contentType == ContentType.NEWSFEED){
             //뉴스피드 조회
-            Newsfeed newsfeedById = newsfeedService.findById(requestDto.getContentId());
+            Newsfeed newsfeedById = newsfeedService.getNewsfeed(requestDto.getContentId());
 
             // 좋아요를 누른 유저와 콘텐츠를 적은 유저가 동일한지 확인
             if(userByAccountId.getId().equals(newsfeedById.getUser().getId())){

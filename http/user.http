@@ -3,10 +3,10 @@ POST http://localhost:8080/users
 Content-Type: application/json
 
 {
-  "accountId": "test123456",
+  "accountId": "user111111",
   "password": "1q2w3e4r!@#$",
-  "name": "test",
-  "email": "test123@email.com"
+  "name": "user1",
+  "email": "user1@email.com"
 }
 
 ### 로그인
@@ -14,15 +14,15 @@ POST http://localhost:8080/users/login
 Content-Type: application/json
 
 {
-  "accountId": "test123456",
+  "accountId": "user111111",
   "password": "1q2w3e4r!@#$"
 }
 
 > {%
-client.log(response.headers.valueOf("accessToken"));
-client.log(response.headers.valueOf("refreshToken"));
-client.global.set("accessToken", response.headers.valueOf("accessToken"));
-client.global.set("refreshToken", response.headers.valueOf("refreshToken"));
+    client.log(response.headers.valueOf("accessToken"));
+    client.log(response.headers.valueOf("refreshToken"));
+    client.global.set("accessToken", response.headers.valueOf("accessToken"));
+    client.global.set("refreshToken", response.headers.valueOf("refreshToken"));
 %}
 
 ### 로그아웃
@@ -63,3 +63,14 @@ Content-Type: application/json
   "currentPassword": "1q2w3e4r!@#$",
   "newPassword": "1qaz2wsx!@"
 }
+
+### 회원 상태 비활성화
+PATCH http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "password": "1q2w3e4r!@#$"
+}
+

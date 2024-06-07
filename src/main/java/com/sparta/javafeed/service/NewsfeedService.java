@@ -5,6 +5,7 @@ import com.sparta.javafeed.dto.NewsfeedResponseDto;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.NewsfeedRepository;
 import jakarta.transaction.Transactional;
@@ -28,8 +29,14 @@ public class NewsfeedService {
     }
 
     public List<NewsfeedResponseDto> getNewsfeed() {
-        return newsfeedRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(NewsfeedResponseDto::new).toList();
+        List<NewsfeedResponseDto> newsfeedList = newsfeedRepository
+                .findAllByUser_UserStatusOrderByCreatedAtDesc(UserStatus.ACTIVE).stream().map(NewsfeedResponseDto::new).toList();
+
+        if (newsfeedList.isEmpty()) {
+            throw new CustomException(ErrorType.NOT_FOUND_POST);
+        }
+
+        return newsfeedList;
     }
 
     @Transactional
@@ -49,16 +56,15 @@ public class NewsfeedService {
 
     private Newsfeed checkValidatedNewsfeed(Long id, User user) {
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(() ->
-                new CustomException(ErrorType.NOT_FOUNT_POST));
+                new CustomException(ErrorType.NOT_FOUND_POST));
 
         newsfeed.userValidate(user);
 
         return newsfeed;
     }
 
-    public Newsfeed findById(Long id){
-        return newsfeedRepository.findById(id).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUNT_POST)
-        );
+    public Newsfeed getNewsfeed(Long postId) {
+        return newsfeedRepository.findByIdAndUser_UserStatus(postId, UserStatus.ACTIVE)
+                .orElseThrow(()-> new CustomException(ErrorType.NOT_FOUND_POST));
     }
 }
