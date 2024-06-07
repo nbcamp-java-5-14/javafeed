@@ -9,9 +9,14 @@ import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.NewsfeedRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,9 +32,16 @@ public class NewsfeedService {
         return NewsfeedResponseDto.toDto(newsfeed);
     }
 
-    public List<NewsfeedResponseDto> getNewsfeed() {
-        return newsfeedRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(NewsfeedResponseDto::new).toList();
+    public Page<NewsfeedResponseDto> getNewsfeed(int page) {
+
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "createdAt");
+        Pageable pageable = PageRequest.of(page, 10, sort);
+
+        return newsfeedRepository.findAll(pageable).map(NewsfeedResponseDto::new);
+
+//        return newsfeedRepository.findAllByOrderByCreatedAtDesc().stream()
+//                .map(NewsfeedResponseDto::new).toList();
     }
 
     @Transactional
