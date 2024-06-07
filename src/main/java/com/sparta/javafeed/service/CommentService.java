@@ -6,9 +6,11 @@ import com.sparta.javafeed.entity.Comment;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -30,6 +33,7 @@ public class CommentService {
      */
     public CommentResponseDto addComment(User user, Long postId, String description) {
         Newsfeed newsfeed = newsfeedService.getNewsfeed(postId);
+
         Comment comment = new Comment(user, newsfeed, description);
         commentRepository.save(comment);
 
@@ -42,7 +46,14 @@ public class CommentService {
      * @return 댓글 목록
      */
     public List<CommentResponseDto> getComments(Long postId) {
-        return commentRepository.findAllByNewsfeedId(postId).stream().map(CommentResponseDto::new).toList();
+        List<CommentResponseDto> commentList = commentRepository
+                .findAllByNewsfeedIdAndUser_UserStatus(postId, UserStatus.ACTIVE).stream().map(CommentResponseDto::new).toList();
+
+        if (commentList.isEmpty()) {
+            throw new CustomException(ErrorType.NOT_FOUND_COMMENT);
+        }
+
+        return commentList;
     }
 
     /**
@@ -78,8 +89,10 @@ public class CommentService {
      * @return 댓글 Entity
      */
     private Comment getValidatedComment(Long commentId, User user) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                ()-> new CustomException(ErrorType.NOT_FOUND_COMMENT));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new CustomException(ErrorType.NOT_FOUND_COMMENT));
+
+        newsfeedService.getNewsfeed(comment.getNewsfeed().getId());
 
         comment.validate(user);
 
