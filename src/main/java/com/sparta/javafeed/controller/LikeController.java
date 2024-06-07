@@ -2,6 +2,7 @@ package com.sparta.javafeed.controller;
 
 import com.fasterxml.jackson.databind.deser.BasicDeserializerFactory;
 import com.sparta.javafeed.dto.LikeRequestDto;
+import com.sparta.javafeed.dto.LikeResponseDto;
 import com.sparta.javafeed.dto.ResponseStatusDto;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ResponseStatus;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,5 +34,12 @@ public class LikeController {
     public ResponseEntity<?> deleteLike(@PathVariable Long likeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         likeService.deleteLike(likeId, userDetails.getUser());
         return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.LIKE_DELETE_SUCCESS));
+    }
+
+    // 임시로 구현한 조회
+    // 콘텐츠 타입과 아이디로 해당 콘텐츠의 좋아요 전체 조회
+    @GetMapping("/{contentId}/{contentType}")
+    public List<LikeResponseDto> getLikes(@PathVariable Long contentId, @PathVariable String contentType){
+        return likeService.getLikes(contentId, contentType);
     }
 }

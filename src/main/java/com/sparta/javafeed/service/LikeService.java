@@ -1,6 +1,7 @@
 package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.LikeRequestDto;
+import com.sparta.javafeed.dto.LikeResponseDto;
 import com.sparta.javafeed.entity.Comment;
 import com.sparta.javafeed.entity.Like;
 import com.sparta.javafeed.entity.Newsfeed;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -91,5 +93,11 @@ public class LikeService {
         }
 
         likeRepository.delete(like);
+    }
+
+    public List<LikeResponseDto> getLikes(Long contentId, String contentType) {
+        List<Like> likeList = likeRepository.findByContentIdAndContentTypeLike(contentId, ContentType.toContentType(contentType));
+
+        return likeList.stream().map(LikeResponseDto::new).toList();
     }
 }

@@ -29,7 +29,11 @@ refreshToken: {{refreshToken}}
 Content-Type: application/json
 
 
-
+### 좋아요 조회
+GET http://localhost:8080/likes/1/COMMENT
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
 
 
 
