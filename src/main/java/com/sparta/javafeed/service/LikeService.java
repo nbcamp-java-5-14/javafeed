@@ -1,6 +1,7 @@
 package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.LikeRequestDto;
+import com.sparta.javafeed.entity.Comment;
 import com.sparta.javafeed.entity.Like;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
@@ -21,7 +22,9 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserService userService;
     private final NewsfeedService newsfeedService;
+    private final CommentService commentService;
 
+    @Transactional
     public void createLike(LikeRequestDto requestDto, User user) {
         // 유저 조회
         User userByAccountId = userService.findByAccountId(user.getAccountId());
@@ -44,6 +47,24 @@ public class LikeService {
            }
 
             Like like = new Like(userByAccountId, newsfeedById.getId(), ContentType.NEWSFEED);
+            likeRepository.save(like);
+        } else if(contentType == ContentType.COMMENT){
+            // 댓글 조회
+            Comment commentById = commentService.getComment(requestDto.getContentId());
+
+            // 좋아요를 누른 유저와 콘텐츠를 적은 유저가 동일한지 확인
+            if(userByAccountId.getId().equals(commentById.getUser().getId())){
+                throw new CustomException(ErrorType.CANNOT_LIKE_OWN_CONTENT);
+            }
+
+            // 이미 좋아요 했는지 확인
+            Optional<Like> byContentIdAndUserAndContentTypeLike = likeRepository.findByContentIdAndUserAndContentTypeLike(commentById.getId(), userByAccountId, ContentType.COMMENT);
+            if(byContentIdAndUserAndContentTypeLike.isPresent()){
+                throw new CustomException(ErrorType.ALREADY_LIKED);
+            }
+
+            Like like = new Like(userByAccountId, commentById.getId(), ContentType.COMMENT);
+            commentById.addLikeCnt();
             likeRepository.save(like);
         }
     }

@@ -34,6 +34,7 @@ public class Comment extends Timestamped {
         this.user = user;
         this.newsfeed = newsfeed;
         this.description = description;
+        this.likeCnt = 0L;
     }
 
     public void validate(User user) {
@@ -44,5 +45,9 @@ public class Comment extends Timestamped {
 
     public void update(String description) {
         this.description = description;
+    }
+
+    public void addLikeCnt() {
+        this.likeCnt++;
     }
 }
