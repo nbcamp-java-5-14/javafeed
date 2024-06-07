@@ -17,7 +17,8 @@ public enum ResponseStatus {
     PASSWORD_UPDATE_SUCCESS(HttpStatus.OK, "비밀번호가 수정 되었습니다."),
     POST_CREATE_SUCCESS(HttpStatus.OK, "게시글이 작성 되었습니다."),
     POST_UPDATE_SUCCESS(HttpStatus.OK, "게시글이 수정 되었습니다."),
-    POST_DELETE_SUCCESS(HttpStatus.OK, "게시글이 삭제 되었습니다.");
+    POST_DELETE_SUCCESS(HttpStatus.OK, "게시글이 삭제 되었습니다."),
+    COMMENT_CREATE_SUCCESS(HttpStatus.OK, "댓글이 작성 되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

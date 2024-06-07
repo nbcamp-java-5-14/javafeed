@@ -55,4 +55,9 @@ public class NewsfeedService {
 
         return newsfeed;
     }
+
+    public Newsfeed getNewsfeed(Long postId) {
+        return newsfeedRepository.findById(postId).orElseThrow(
+                ()-> new CustomException(ErrorType.NOT_FOUNT_POST));
+    }
 }

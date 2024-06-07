@@ -26,4 +26,10 @@ public class Comment extends Timestamped {
 
     @Column
     private Long likeCnt;
+
+    public Comment(User user, Newsfeed newsfeed, String description) {
+        this.user = user;
+        this.newsfeed = newsfeed;
+        this.description = description;
+    }
 }
