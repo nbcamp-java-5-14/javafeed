@@ -1,13 +1,6 @@
 package com.sparta.javafeed.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.javafeed.dto.ExceptionDto;
-import com.sparta.javafeed.enums.ErrorType;
-import com.sparta.javafeed.exception.CustomException;
-import com.sparta.javafeed.jwt.JwtAuthenticationFilter;
-import com.sparta.javafeed.jwt.JwtAuthorizationFilter;
-import com.sparta.javafeed.jwt.JwtExceptionFilter;
-import com.sparta.javafeed.jwt.JwtUtil;
+import com.sparta.javafeed.jwt.*;
 import com.sparta.javafeed.repository.UserRepository;
 import com.sparta.javafeed.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +12,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -37,7 +28,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,7 +78,7 @@ public class SecurityConfig {
         );
 
         // 인증 되지않은 유저 요청 시 동작
-        http.exceptionHandling((exception) -> exception.authenticationEntryPoint(customAuthenticationEntryPoint));
+        http.exceptionHandling((exception) -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
