@@ -1,6 +1,7 @@
 package com.sparta.javafeed.repository;
 
 import com.sparta.javafeed.entity.Newsfeed;
+import com.sparta.javafeed.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.domain.Pageable;
@@ -9,9 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsfeedRepository extends JpaRepository<Newsfeed, Long> {
-    List<Newsfeed> findAllByOrderByCreatedAtDesc();
+//    List<Newsfeed> findAllByOrderByCreatedAtDesc();
+//
+//    Optional<Newsfeed> findByIdAndUserId(Long id, Long id1);
 
-    Optional<Newsfeed> findByIdAndUserId(Long id, Long id1);
+    List<Newsfeed> findAllByCreatedAtBetweenAndUser_UserStatus(LocalDateTime start, LocalDateTime end, Pageable pageable, UserStatus active);
 
-    List<Newsfeed> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Optional<Newsfeed> findByIdAndUser_UserStatus(Long postId, UserStatus userStatus);
 }
+
+//public interface NewsfeedRepository extends JpaRepository<Newsfeed, Long> {
+//    List<Newsfeed> findAllByOrderByCreatedAtDesc();
+//
+//    Optional<Newsfeed> findByIdAndUserId(Long id, Long id1);
+//
+//    List<Newsfeed> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+//}
