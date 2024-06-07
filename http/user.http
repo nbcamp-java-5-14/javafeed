@@ -74,3 +74,20 @@ Content-Type: application/json
   "password": "1q2w3e4r!@#$"
 }
 
+
+### 좋아요 등록
+POST http://localhost:8080/likes
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+"contentId" : 1,
+"contentType":"NEWSFEED"
+}
+
+### 좋아요 삭제
+DELETE http://localhost:8080/likes/4
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
