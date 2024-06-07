@@ -69,7 +69,7 @@ public class UserService {
             throw new CustomException(ErrorType.INVALID_PASSWORD);
         }
 
-        userByAccountId.deactiveUser(UserStatus.DEACTIVATE);
+        userByAccountId.updateUserStatus(UserStatus.DEACTIVATE);
     }
 
     /**
@@ -139,6 +139,24 @@ public class UserService {
         // 블랙리스트 추가
         jwtUtil.addBlacklistToken(accessToken);
         jwtUtil.addBlacklistToken(refreshToken);
+    }
+
+
+    /**
+     * 이메일 인증 후 UserStatus ACTIVE로 업데이트
+     * @param requestDto 이메일(email) 및 인증코드(authNum)
+     */
+    public void verifyCode(EmailVerifyCheckRequestDto requestDto) {
+        //회원 존재여부 재확인 로직
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
+
+
+        //회원 상태 ACTIVE로 변경
+        user.updateUserStatus(UserStatus.ACTIVE);
+
+        //DB에 저장
+        userRepository.save(user);
     }
 
     /**
