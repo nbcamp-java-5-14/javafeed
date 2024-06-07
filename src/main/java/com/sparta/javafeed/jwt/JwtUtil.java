@@ -70,6 +70,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    // refresh token 생성
     public String createRefreshToken(String accountId, UserRole role) {
         Date date = new Date();
 
@@ -82,6 +83,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    // 헤더에서 access 토큰 가져오기
     public String getAccessTokenFromHeader(HttpServletRequest request) {
         String accessToken = request.getHeader(AUTH_ACCESS_HEADER);
         if (StringUtils.hasText(accessToken) && accessToken.startsWith(BEARER_PREFIX)) {
@@ -90,6 +92,7 @@ public class JwtUtil {
         return null;
     }
 
+    // 헤더에서 refresh 토큰 가져오기
     public String getRefreshTokenFromHeader(HttpServletRequest request) {
         String refreshToken = request.getHeader(AUTH_REFRESH_HEADER);
         if (StringUtils.hasText(refreshToken) && refreshToken.startsWith(BEARER_PREFIX)) {
@@ -98,6 +101,7 @@ public class JwtUtil {
         return null;
     }
 
+    // 토큰 검증
     public boolean validateToken(String token) {
         if (isblacklistToken(token)) {
             throw new CustomException(ErrorType.LOGGED_OUT_TOKEN);
@@ -120,10 +124,12 @@ public class JwtUtil {
         }
     }
 
+    // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    // refresh 토큰이 사용자 정보에 존재하는지 확인
     public boolean existRefreshToken(String refreshToken) {
         Claims info = getUserInfoFromToken(refreshToken);
         User user = userRepository.findByAccountId(info.getSubject()).orElseThrow(
@@ -131,14 +137,17 @@ public class JwtUtil {
         return user.checkRefreshToken(refreshToken);
     }
 
+    // 헤더에 access 토큰 담기
     public void setHeaderAccessToken(HttpServletResponse response, String newAccessToken) {
         response.setHeader(AUTH_ACCESS_HEADER, newAccessToken);
     }
 
+    // 블략리스트에 추가
     public void addBlacklistToken(String token) {
         blacklist.add(token);
     }
 
+    // 블랙리스트인지 확인
     private boolean isblacklistToken(String token) {
         return blacklist.contains(token);
     }

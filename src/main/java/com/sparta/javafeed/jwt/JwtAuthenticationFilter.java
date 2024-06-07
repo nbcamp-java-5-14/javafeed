@@ -15,7 +15,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,15 +31,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        // Security 로그인 요청을 처리할 URL 패턴
         setFilterProcessesUrl("/users/login");
     }
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserRepository userRepository) {
-        super(authenticationManager);
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-    }
-
+    // 로그인 요청 처리
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
@@ -58,6 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
+    // 로그인 성공 처리
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException, ServletException {
         String username = ((UserDetailsImpl) auth.getPrincipal()).getUsername();
@@ -67,18 +63,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.createRefreshToken(username, role);
 
         User user = ((UserDetailsImpl) auth.getPrincipal()).getUser();
-        user.saveRefreshToken(refreshToken);
+        user.saveRefreshToken(refreshToken.substring(7));
         userRepository.save(user);
 
         response.addHeader(JwtUtil.AUTH_ACCESS_HEADER, accessToken);
         response.addHeader(JwtUtil.AUTH_REFRESH_HEADER, refreshToken);
 
+        // 로그인 성공 메시지
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(new ResponseStatusDto(ResponseStatus.LOGIN_SUCCESS)));
         response.getWriter().flush();
     }
 
+    // 로그인 실패 처리
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         ErrorType errorType = ErrorType.NOT_FOUND_AUTHENTICATION_INFO;
