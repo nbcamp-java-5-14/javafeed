@@ -28,7 +28,12 @@ public enum ErrorType {
     NOT_FOUND_AUTHENTICATION_INFO(HttpStatus.NOT_FOUND, "인증 정보를 찾을 수 없습니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않는 JWT 입니다."),
     EXPIRED_JWT(HttpStatus.FORBIDDEN, "만료된 JWT 입니다."),
-    LOGGED_OUT_TOKEN(HttpStatus.FORBIDDEN, "이미 로그아웃된 토큰입니다.");
+    LOGGED_OUT_TOKEN(HttpStatus.FORBIDDEN, "이미 로그아웃된 토큰입니다."),
+
+    ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 했습니다."),
+    CANNOT_LIKE_OWN_CONTENT(HttpStatus.FORBIDDEN, "자신의 콘텐츠에 좋아요를 할 수 없습니다."),
+    NON_EXISTENT_CONTENT_TYPE(HttpStatus.NOT_FOUND, "존재하지 않는 콘텐츠 타입입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String message;
