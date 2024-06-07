@@ -66,11 +66,11 @@ public class User extends Timestamped {
         this.password = encodedPassword;
         this.name = signupRequest.getName();
         this.email = signupRequest.getEmail();
-        this.userStatus = UserStatus.ACTIVE;
+        this.userStatus = UserStatus.BEFORE_VERIFIED;
         this.userRole = UserRole.USER;
     }
 
-    public void deactiveUser(UserStatus userStatus) {
+    public void updateUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
         this.userStatusModifiedAt = LocalDateTime.now();
     }
