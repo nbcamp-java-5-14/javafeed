@@ -6,7 +6,7 @@ Content-Type: application/json
   "accountId": "user111111",
   "password": "1q2w3e4r!@#$",
   "name": "user1",
-  "email": "user1@email.com"
+  "email": "insidesy4@email.com"
 }
 
 
@@ -88,9 +88,10 @@ Content-Type: application/json
 
 
 
-
+//회원가입시 사용한 본인 이메일을 입력해주세요.
+//본인 이메일을 입력하지 않으면 테스트가 불가합니다.
 ### 이메일 인증번호 전송
-PATCH http://localhost:8080/email
+POST http://localhost:8080/email
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
 Content-Type: application/json
@@ -103,12 +104,12 @@ Content-Type: application/json
 
 
 ### 인증번호 확인
-PATCH http://localhost:8080/email/verify
+POST http://localhost:8080/email/verify
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
 Content-Type: application/json
 
 {
   "email" : "insidesy4@gmail.com",
-  "authNum": "인증번호 입력"
+  "authNum": "caIV5MZY"
 }
