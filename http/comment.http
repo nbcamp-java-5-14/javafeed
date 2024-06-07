@@ -18,7 +18,7 @@ Content-Type: application/json
 @postId = 1
 
 ### 댓글 등록
-POST http://localhost:8080/posts/{{postId}}/comments
+POST http://localhost:8080/post/{{postId}}/comments
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
 Content-Type: application/json
@@ -26,3 +26,6 @@ Content-Type: application/json
 {
   "description": "test description"
 }
+
+### 게시글 목록 조회
+GET http://localhost:8080/post/{{postId}}/comments

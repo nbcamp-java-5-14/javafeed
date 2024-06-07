@@ -1,13 +1,14 @@
-package com.sparta.javafeed.security;
+package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.CommentResponseDto;
 import com.sparta.javafeed.entity.Comment;
 import com.sparta.javafeed.entity.Newsfeed;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.repository.CommentRepository;
-import com.sparta.javafeed.service.NewsfeedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +23,9 @@ public class CommentService {
         commentRepository.save(comment);
 
         return new CommentResponseDto(comment);
+    }
+
+    public List<CommentResponseDto> getComments(Long postId) {
+        return commentRepository.findAllByNewsfeedId(postId).stream().map(CommentResponseDto::new).toList();
     }
 }
