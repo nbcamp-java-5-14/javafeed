@@ -9,6 +9,7 @@ import com.sparta.javafeed.security.UserDetailsImpl;
 import com.sparta.javafeed.service.NewsfeedService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,12 @@ public class NewsfeedController {
     }
 
     @GetMapping
-    public List<NewsfeedResponseDto> getNewsfeed() {
-        return newsfeedService.getNewsfeed();
+    public Page<NewsfeedResponseDto> getNewsfeed
+            (@RequestParam(value = "page") int page,
+             @RequestParam(value = "searchStartDate", required = false) String searchStartDate,
+             @RequestParam(value = "searchEndDate", required = false) String searchEndDate
+            ) {
+        return newsfeedService.getNewsfeed(page-1, searchStartDate, searchEndDate);
     }
 
     @PutMapping("/{id}")

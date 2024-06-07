@@ -10,10 +10,15 @@ import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.NewsfeedRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +33,24 @@ public class NewsfeedService {
         return NewsfeedResponseDto.toDto(newsfeed);
     }
 
-    public List<NewsfeedResponseDto> getNewsfeed() {
-        List<NewsfeedResponseDto> newsfeedList = newsfeedRepository
-                .findAllByUser_UserStatusOrderByCreatedAtDesc(UserStatus.ACTIVE).stream().map(NewsfeedResponseDto::new).toList();
+    public Page<NewsfeedResponseDto> getNewsfeed(int page, String searchStartDate, String searchEndDate) {
 
-        if (newsfeedList.isEmpty()) {
-            throw new CustomException(ErrorType.NOT_FOUND_POST);
+        if(searchStartDate == null) {
+            searchStartDate = "00010101";
+        }
+        if(searchEndDate == null) {
+            searchEndDate = "99991231";
         }
 
-        return newsfeedList;
+        LocalDateTime startDateTime = LocalDate.parse(searchStartDate, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0, 0, 0);
+        LocalDateTime endDateTime = LocalDate.parse(searchEndDate, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(23, 59, 59);
+
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "createdAt");
+        Pageable pageable = PageRequest.of(page, 10, sort);
+
+        return new PageImpl<>(newsfeedRepository.findAllByCreatedAtBetweenAndUser_UserStatus(startDateTime, endDateTime, pageable, UserStatus.ACTIVE)
+                .stream().map(NewsfeedResponseDto::new).collect(Collectors.toList()));
     }
 
     @Transactional
