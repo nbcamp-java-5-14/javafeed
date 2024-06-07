@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorType {
-    // test controller
+    // user
     DUPLICATE_ACCOUNT_ID(HttpStatus.LOCKED, "이미 아이디가 존재합니다."),
     DUPLICATE_EMAIL(HttpStatus.LOCKED, "이미 이메일이 존재합니다."),
     INVALID_ACCOUNT_ID(HttpStatus.UNAUTHORIZED, "아이디가 일치하지 않습니다."),
@@ -19,11 +19,16 @@ public enum ErrorType {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     REQUIRES_LOGIN(HttpStatus.LOCKED, "로그인이 필요한 서비스입니다."),
 
-    NOT_FOUNT_POST(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
+    // newsfeed
+    NOT_FOUND_POST(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
+
+    // comment
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),
 
     // DUPLICATED_USER(HttpStatus.LOCKED, "중복된 사용자가 존재합니다."),
     // DUPLICATED_EMAIL(HttpStatus.LOCKED, "중복된 Email 입니다."),
 
+    // JWT
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다. 다시 로그인 해주세요."),
     NOT_FOUND_AUTHENTICATION_INFO(HttpStatus.NOT_FOUND, "인증 정보를 찾을 수 없습니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않는 JWT 입니다."),
