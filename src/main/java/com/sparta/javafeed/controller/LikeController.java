@@ -3,6 +3,7 @@ package com.sparta.javafeed.controller;
 import com.fasterxml.jackson.databind.deser.BasicDeserializerFactory;
 import com.sparta.javafeed.dto.LikeRequestDto;
 import com.sparta.javafeed.entity.User;
+import com.sparta.javafeed.enums.ResponseStatus;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import com.sparta.javafeed.service.LikeService;
 import jakarta.validation.Valid;
@@ -20,10 +21,14 @@ public class LikeController {
 
     @PostMapping
     public ResponseEntity<?> createLike(@RequestBody @Valid LikeRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-         likeService.createLike(requestDto, userDetails.getUser());
+        likeService.createLike(requestDto, userDetails.getUser());
 
-        return ResponseEntity.ok("좋아요를 성공적으로 등록했습니다.");
+        return ResponseEntity.ok(ResponseStatus.LIKE_CREATE_SUCCESS);
     }
 
-
+    @DeleteMapping("/{likeId}")
+    public ResponseEntity<?> deleteLike(@PathVariable Long likeId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        likeService.deleteLike(likeId, userDetails.getUser());
+        return ResponseEntity.ok(ResponseStatus.LIKE_DELETE_SUCCESS);
+    }
 }

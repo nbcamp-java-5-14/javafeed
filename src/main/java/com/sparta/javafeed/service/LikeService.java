@@ -10,6 +10,7 @@ import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -45,5 +46,23 @@ public class LikeService {
             Like like = new Like(userByAccountId, newsfeedById.getId(), ContentType.NEWSFEED);
             likeRepository.save(like);
         }
+    }
+
+    @Transactional
+    public void deleteLike(Long likeId, User user) {
+        // 유저 조회
+        User userByAccountId = userService.findByAccountId(user.getAccountId());
+
+        // like 조회
+        Like like = likeRepository.findById(likeId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_LIKE)
+        );
+
+        // 요청하는 유저와 좋아요 유저가 같은지 확인
+        if(!like.getUser().getId().equals(userByAccountId.getId())){
+            throw new CustomException(ErrorType.NO_AUTHENTICATION);
+        }
+
+        likeRepository.delete(like);
     }
 }

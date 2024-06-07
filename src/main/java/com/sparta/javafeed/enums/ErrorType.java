@@ -32,7 +32,9 @@ public enum ErrorType {
 
     ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 했습니다."),
     CANNOT_LIKE_OWN_CONTENT(HttpStatus.FORBIDDEN, "자신의 콘텐츠에 좋아요를 할 수 없습니다."),
-    NON_EXISTENT_CONTENT_TYPE(HttpStatus.NOT_FOUND, "존재하지 않는 콘텐츠 타입입니다.");
+    NON_EXISTENT_CONTENT_TYPE(HttpStatus.NOT_FOUND, "존재하지 않는 콘텐츠 타입입니다."),
+    NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "좋아요가 존재하지 않습니다.")
+    ;
 
 
     private final HttpStatus httpStatus;
