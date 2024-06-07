@@ -49,7 +49,7 @@ public class NewsfeedService {
 
     private Newsfeed checkValidatedNewsfeed(Long id, User user) {
         Newsfeed newsfeed = newsfeedRepository.findById(id).orElseThrow(() ->
-                new CustomException(ErrorType.NOT_FOUNT_POST));
+                new CustomException(ErrorType.NOT_FOUND_POST));
 
         newsfeed.userValidate(user);
 
@@ -58,6 +58,6 @@ public class NewsfeedService {
 
     public Newsfeed getNewsfeed(Long postId) {
         return newsfeedRepository.findById(postId).orElseThrow(
-                ()-> new CustomException(ErrorType.NOT_FOUNT_POST));
+                ()-> new CustomException(ErrorType.NOT_FOUND_POST));
     }
 }

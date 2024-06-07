@@ -1,5 +1,8 @@
 package com.sparta.javafeed.entity;
 
+import com.sparta.javafeed.enums.ErrorType;
+import com.sparta.javafeed.enums.UserRole;
+import com.sparta.javafeed.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +33,16 @@ public class Comment extends Timestamped {
     public Comment(User user, Newsfeed newsfeed, String description) {
         this.user = user;
         this.newsfeed = newsfeed;
+        this.description = description;
+    }
+
+    public void validate(User user) {
+        if (user.getUserRole() == UserRole.USER && !this.user.getId().equals(user.getId())) {
+            throw new CustomException(ErrorType.NO_AUTHENTICATION);
+        }
+    }
+
+    public void update(String description) {
         this.description = description;
     }
 }

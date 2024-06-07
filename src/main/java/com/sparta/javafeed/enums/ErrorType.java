@@ -19,7 +19,9 @@ public enum ErrorType {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     REQUIRES_LOGIN(HttpStatus.LOCKED, "로그인이 필요한 서비스입니다."),
 
-    NOT_FOUNT_POST(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
+    NOT_FOUND_POST(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
+
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),
 
     // DUPLICATED_USER(HttpStatus.LOCKED, "중복된 사용자가 존재합니다."),
     // DUPLICATED_EMAIL(HttpStatus.LOCKED, "중복된 Email 입니다."),
