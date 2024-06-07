@@ -21,6 +21,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final NewsfeedService newsfeedService;
 
+    /**
+     * 댓글 등록
+     * @param user 회원 정보
+     * @param postId 게시글 ID
+     * @param description 댓글 내용
+     * @return 댓글 정보
+     */
     public CommentResponseDto addComment(User user, Long postId, String description) {
         Newsfeed newsfeed = newsfeedService.getNewsfeed(postId);
         Comment comment = new Comment(user, newsfeed, description);
@@ -29,10 +36,22 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    /**
+     * 댓글 목록 조회
+     * @param postId 게시글 ID
+     * @return 댓글 목록
+     */
     public List<CommentResponseDto> getComments(Long postId) {
         return commentRepository.findAllByNewsfeedId(postId).stream().map(CommentResponseDto::new).toList();
     }
 
+    /**
+     * 댓글 수정
+     * @param commentId 댓글 ID
+     * @param requestDto 수정 내용
+     * @param user 회원 정보
+     * @return 댓글 정보
+     */
     @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
         Comment comment = getValidatedComment(commentId, user);
@@ -42,6 +61,22 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    /**
+     * 댓글 삭제
+     * @param commentId 댓글 ID
+     * @param user 회원 정보
+     */
+    public void deleteComment(Long commentId, User user) {
+        Comment comment = getValidatedComment(commentId, user);
+        commentRepository.delete(comment);
+    }
+
+    /**
+     * 댓글 조회 및 권한 검증
+     * @param commentId 댓글 ID
+     * @param user 회원 정보
+     * @return 댓글 Entity
+     */
     private Comment getValidatedComment(Long commentId, User user) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 ()-> new CustomException(ErrorType.NOT_FOUND_COMMENT));

@@ -40,3 +40,8 @@ Content-Type: application/json
 {
   "description": "update description"
 }
+
+### 댓글 삭제
+DELETE http://localhost:8080/posts/{{postId}}/comments/{{commentId}}
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
