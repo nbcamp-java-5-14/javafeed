@@ -1,4 +1,4 @@
-package com.sparta.javafeed.config;
+package com.sparta.javafeed.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.javafeed.dto.ExceptionDto;
@@ -16,7 +16,7 @@ import java.io.IOException;
  * 인증 되지않은 유저 요청 시 동작
  */
 @Component
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

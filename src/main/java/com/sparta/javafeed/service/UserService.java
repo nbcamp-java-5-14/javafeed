@@ -164,7 +164,7 @@ public class UserService {
      * @param accountId 회원 ID
      * @return 회원 Entity
      */
-    private User findByAccountId(String accountId){
+    public User findByAccountId(String accountId){
         return userRepository.findByAccountId(accountId).orElseThrow(
                 () -> new CustomException(ErrorType.INVALID_ACCOUNT_ID)
         );

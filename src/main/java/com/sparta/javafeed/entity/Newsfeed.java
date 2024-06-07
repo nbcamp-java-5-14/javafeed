@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,15 +34,8 @@ public class Newsfeed extends Timestamped {
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String description;
 
-    @CreatedDate
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime modifiedAt;
+    @OneToMany(mappedBy = "newsfeed", orphanRemoval = true)
+    private List<Comment> commentList;
 
     public Newsfeed(String title, String description, User user) {
         this.title = title;
