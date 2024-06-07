@@ -33,9 +33,12 @@ public class NewsfeedController {
     }
 
     @GetMapping
-    public Page<NewsfeedResponseDto> getNewsfeed(@RequestParam(value = "page",defaultValue = "0") int page
-    ) {
-        return newsfeedService.getNewsfeed(page);
+    public Page<NewsfeedResponseDto> getNewsfeed
+            (@RequestParam(value = "page") int page,
+             @RequestParam(value = "searchStartDate", required = false) String searchStartDate,
+             @RequestParam(value = "searchEndDate", required = false) String searchEndDate
+            ) {
+        return newsfeedService.getNewsfeed(page-1, searchStartDate, searchEndDate);
     }
 
     @PutMapping("/{id}")
