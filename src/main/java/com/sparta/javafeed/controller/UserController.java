@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -101,5 +102,22 @@ public class UserController {
     public ResponseEntity<ResponseStatusDto> updatePassword(@RequestBody @Valid PasswordUpdateDto requestDto, @AuthenticationPrincipal UserDetailsImpl details){
         userService.updatePassword(requestDto, details.getUsername());
         return ResponseEntity.ok(new ResponseStatusDto(ResponseStatus.PASSWORD_UPDATE_SUCCESS));
+    }
+
+    /**
+     * 회원 프로필 이미지 업로드
+     * @param file 이미지 파일
+     * @param details 회원 정보
+     * @return 이미지 url, 응답 상태
+     */
+    @PostMapping("/profile")
+    public ResponseEntity<?> uploadProfile(
+            MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl details) {
+        String url = userService.uploadProfile(file, details.getUser());
+
+        ResponseEntityDto<String> responseEntity = new ResponseEntityDto<>(ResponseStatus.UPLOAD_POFILE_IMAGE_SUCCESS, url);
+
+        return ResponseEntity.ok(responseEntity);
     }
 }

@@ -1,12 +1,9 @@
 package com.sparta.javafeed.entity;
 
-import com.sparta.javafeed.dto.PasswordReqeustDto;
 import com.sparta.javafeed.dto.SignupRequestDto;
 import com.sparta.javafeed.dto.UserInfoRequestDto;
-import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserRole;
 import com.sparta.javafeed.enums.UserStatus;
-import com.sparta.javafeed.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,6 +58,9 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime userStatusModifiedAt;
 
+    @Column
+    private String profileImageUrl;
+
     public User(SignupRequestDto signupRequest, String encodedPassword) {
         this.accountId = signupRequest.getAccountId();
         this.password = encodedPassword;
@@ -94,5 +94,9 @@ public class User extends Timestamped {
 
     public void updatePassword(String encodedNewPassword) {
         this.password = encodedNewPassword;
+    }
+
+    public void updateProfileImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

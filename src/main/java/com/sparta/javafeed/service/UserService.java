@@ -7,11 +7,13 @@ import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.jwt.JwtUtil;
 import com.sparta.javafeed.repository.UserRepository;
+import com.sparta.javafeed.util.S3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final S3Util s3Util;
 
     /**
      * 회원가입
@@ -168,5 +171,26 @@ public class UserService {
         return userRepository.findByAccountId(accountId).orElseThrow(
                 () -> new CustomException(ErrorType.INVALID_ACCOUNT_ID)
         );
+    }
+
+    /**
+     * 회원 프로필 이미지 업로드
+     * @param file
+     * @param user
+     * @return
+     */
+    @Transactional
+    public String uploadProfile(MultipartFile file, User user) {
+        if (file.isEmpty()) {
+            throw new CustomException(ErrorType.DOES_NOT_EXIST_FILE);
+        }
+
+        // AWS S3에 이미지 업로드
+        String profileImageUrl = s3Util.uploadFile(file);
+
+        User userByAccountId = this.findByAccountId(user.getAccountId());
+        userByAccountId.updateProfileImage(profileImageUrl);
+
+        return profileImageUrl;
     }
 }
