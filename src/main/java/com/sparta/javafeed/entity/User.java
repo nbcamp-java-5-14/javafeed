@@ -59,6 +59,9 @@ public class User extends Timestamped {
     private LocalDateTime userStatusModifiedAt;
 
     @Column
+    private LocalDateTime emailSentAt;
+
+    @Column
     private String profileImageUrl;
 
     public User(SignupRequestDto signupRequest, String encodedPassword) {
