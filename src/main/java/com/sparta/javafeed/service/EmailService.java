@@ -130,7 +130,7 @@ public class EmailService {
         // 인증 시간 만료 검증 로직
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime emailSentAt = loginUser.getEmailSentAt();
-        if (ChronoUnit.SECONDS.between(emailSentAt, now) > 180) {
+        if (ChronoUnit.SECONDS.between(emailSentAt, now) > 10) {
             throw new CustomException(ErrorType.EXPIRED_AUTH_NUM);
         }
 
