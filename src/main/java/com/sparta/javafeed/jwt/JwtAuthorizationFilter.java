@@ -64,7 +64,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(refreshToken) && jwtUtil.existRefreshToken(refreshToken)) {
                 Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
 
-                UserRole role = UserRole.valueOf(info.get("role").toString());
+                UserRole role = UserRole.valueOf(info.get(JwtUtil.AUTHORIZATION_KEY).toString());
 
                 String newAccessToken = jwtUtil.createToken(info.getSubject(), role);
 
