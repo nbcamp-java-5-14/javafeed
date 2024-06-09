@@ -37,6 +37,9 @@ public class Newsfeed extends Timestamped {
     @OneToMany(mappedBy = "newsfeed", orphanRemoval = true)
     private List<Comment> commentList;
 
+    @OneToMany(mappedBy = "newsfeed", orphanRemoval = true)
+    private List<File> fileList;
+
     public Newsfeed(String title, String description, User user) {
         this.title = title;
         this.description = description;

@@ -11,7 +11,7 @@ import com.sparta.javafeed.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class S3Util {
 
@@ -69,7 +69,7 @@ public class S3Util {
         }
 
         // 데이터베이스에 저장할 파일이 저장된 주소와 저장된 이름
-        return new S3ResponseDto(saveDir, amazonS3.getUrl(bucketName, saveDir).toString());
+        return new S3ResponseDto(originName, saveDir, amazonS3.getUrl(bucketName, saveDir).toString(), file.getSize());
     }
 
     /**
