@@ -18,6 +18,7 @@ public enum ResponseStatus {
     // 프로필
     PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필이 수정 되었습니다."),
     PASSWORD_UPDATE_SUCCESS(HttpStatus.OK, "비밀번호가 수정 되었습니다."),
+    UPLOAD_POFILE_IMAGE_SUCCESS(HttpStatus.OK, "프로필 이미지가 업로드 되었습니다."),
     // 게사글
     POST_CREATE_SUCCESS(HttpStatus.OK, "게시글이 작성 되었습니다."),
     POST_UPDATE_SUCCESS(HttpStatus.OK, "게시글이 수정 되었습니다."),

@@ -44,9 +44,14 @@ public enum ErrorType {
     ALREADY_LIKED(HttpStatus.CONFLICT, "이미 좋아요를 했습니다."),
     CANNOT_LIKE_OWN_CONTENT(HttpStatus.FORBIDDEN, "자신의 콘텐츠에 좋아요를 할 수 없습니다."),
     NON_EXISTENT_CONTENT_TYPE(HttpStatus.NOT_FOUND, "존재하지 않는 콘텐츠 타입입니다."),
-    NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "좋아요가 존재하지 않습니다.")
-    ;
+    NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "좋아요가 존재하지 않습니다."),
 
+    // file
+    NOT_IMGFILE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "이미지 파일만 업로드할 수 있습니다."),
+    DOES_NOT_EXIST_FILE(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다."),
+
+    // AWS
+    UPLOAD_FAILED(HttpStatus.GATEWAY_TIMEOUT, "파일 업로드에 실패하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

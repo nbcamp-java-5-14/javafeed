@@ -59,6 +59,17 @@ Content-Type: application/json
   "intro": "intro"
 }
 
+### 회원 프로필 이미지 업로드
+POST http://localhost:8080/users/profile
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="uploadImage.png";
+Content-Type: image/png
+
+< profileImage.png
 
 
 
