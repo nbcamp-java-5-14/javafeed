@@ -6,7 +6,7 @@ Content-Type: application/json
   "accountId": "user111111",
   "password": "1q2w3e4r!@#$",
   "name": "user1",
-  "email": "insidesy4@email.com"
+  "email": "insidesy4@gmail.com"
 }
 
 
@@ -110,5 +110,5 @@ Content-Type: application/json
 
 {
   "email" : "insidesy4@gmail.com",
-  "authNum": "caIV5MZY"
+  "authNum": "qAR4UOhQ"
 }

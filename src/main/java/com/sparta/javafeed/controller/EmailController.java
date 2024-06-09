@@ -1,6 +1,7 @@
 package com.sparta.javafeed.controller;
 
 import com.sparta.javafeed.dto.EmailCheckRequestDto;
+import com.sparta.javafeed.dto.EmailSendResponseDto;
 import com.sparta.javafeed.dto.EmailVerifyCheckRequestDto;
 import com.sparta.javafeed.security.UserDetailsImpl;
 import com.sparta.javafeed.service.EmailService;
@@ -26,9 +27,9 @@ public class EmailController {
      * @return 인증번호
      */
     @PostMapping("/email")
-    public String EmailCheck(@RequestBody @Valid EmailCheckRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details) throws MessagingException, UnsupportedEncodingException {
-        String authCode = emailService.sendEmail(requestDto.getEmail(), details.getUser().getEmail());
-        return authCode;
+    public EmailSendResponseDto sendEmail(@RequestBody @Valid EmailCheckRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl details) throws MessagingException, UnsupportedEncodingException {
+        return emailService.sendEmail(requestDto.getEmail(), details.getUser());
+
     }
 
 

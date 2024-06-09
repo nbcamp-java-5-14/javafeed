@@ -61,6 +61,9 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime userStatusModifiedAt;
 
+    @Column
+    private LocalDateTime emailSentAt;
+
     public User(SignupRequestDto signupRequest, String encodedPassword) {
         this.accountId = signupRequest.getAccountId();
         this.password = encodedPassword;
