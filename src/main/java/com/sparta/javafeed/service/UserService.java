@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -143,14 +144,28 @@ public class UserService {
 
 
     /**
+     * 이메일 전송 후, user.eamilSent 에 전송시간 저장
+     * @param email
+     */
+    public void updateUserEmailSent(String email, LocalDateTime sentAt) {
+        //회원 존재여부 재확인 로직
+        User user = findByEmail(email);
+
+        //이메일 전송 시간 저장
+        user.setEmailSentAt(sentAt);
+
+        //DB에 저장
+        userRepository.save(user);
+    }
+
+
+    /**
      * 이메일 인증 후 UserStatus ACTIVE로 업데이트
      * @param requestDto 이메일(email) 및 인증코드(authNum)
      */
-    public void verifyCode(EmailVerifyCheckRequestDto requestDto) {
+    public void updateUserStatus(EmailVerifyCheckRequestDto requestDto) {
         //회원 존재여부 재확인 로직
-        User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
-
+        User user = findByEmail(requestDto.getEmail());
 
         //회원 상태 ACTIVE로 변경
         user.updateUserStatus(UserStatus.ACTIVE);
@@ -158,6 +173,8 @@ public class UserService {
         //DB에 저장
         userRepository.save(user);
     }
+
+
 
     /**
      * 회원 Entity 조회
@@ -169,4 +186,16 @@ public class UserService {
                 () -> new CustomException(ErrorType.INVALID_ACCOUNT_ID)
         );
     }
+
+    /**
+     * 회원 Entity 조회
+     * @param email 회원 EMAIL
+     * @return 회원 Entity
+     */
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorType.INVALID_EMAIL)
+        );
+    }
+
 }

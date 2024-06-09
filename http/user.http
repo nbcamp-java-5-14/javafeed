@@ -6,7 +6,7 @@ Content-Type: application/json
   "accountId": "user111111",
   "password": "1q2w3e4r!@#$",
   "name": "user1",
-  "email": "insidesy4@email.com"
+  "email": "insidesy4@gmail.com"
 }
 
 
@@ -84,31 +84,4 @@ Content-Type: application/json
 
 {
   "password": "1q2w3e4r!@#$"
-}
-
-
-
-
-### 이메일 인증번호 전송
-POST http://localhost:8080/email
-accessToken: {{accessToken}}
-refreshToken: {{refreshToken}}
-Content-Type: application/json
-
-{
-  "email" : "insidesy4@gmail.com"
-}
-
-
-
-
-### 인증번호 확인
-POST http://localhost:8080/email/verify
-accessToken: {{accessToken}}
-refreshToken: {{refreshToken}}
-Content-Type: application/json
-
-{
-  "email" : "insidesy4@gmail.com",
-  "authNum": "caIV5MZY"
 }

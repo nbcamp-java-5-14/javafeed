@@ -11,9 +11,7 @@ public enum ErrorType {
     // user
     DUPLICATE_ACCOUNT_ID(HttpStatus.LOCKED, "이미 아이디가 존재합니다."),
     DUPLICATE_EMAIL(HttpStatus.LOCKED, "이미 이메일이 존재합니다."),
-    WRONG_EMAIL(HttpStatus.LOCKED, "이메일을 잘못 입력하였습니다."),
-    VERIFIED_EMAIL(HttpStatus.LOCKED, "이미 이메일 검증을 완료하였습니다."),
-    WRONG_AUTH_NUM(HttpStatus.LOCKED, "잘못된 인증번호 입니다."),
+    INVALID_EMAIL(HttpStatus.LOCKED, "이메일을 잘못 입력하였습니다."),
     INVALID_ACCOUNT_ID(HttpStatus.UNAUTHORIZED, "아이디가 일치하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     DEACTIVATE_USER(HttpStatus.FORBIDDEN, "이미 탈퇴한 회원입니다."),
@@ -21,6 +19,11 @@ public enum ErrorType {
     NO_AUTHENTICATION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     REQUIRES_LOGIN(HttpStatus.LOCKED, "로그인이 필요한 서비스입니다."),
+
+    // email_verify
+    EXPIRED_AUTH_NUM(HttpStatus.LOCKED, "이메일 인증 코드가 만료 되었습니다."),
+    WRONG_AUTH_NUM(HttpStatus.LOCKED, "잘못된 인증번호 입니다."),
+    VERIFIED_EMAIL(HttpStatus.LOCKED, "이미 이메일 검증을 완료하였습니다."),
 
     // newsfeed
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),

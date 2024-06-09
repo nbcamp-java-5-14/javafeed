@@ -1,5 +1,6 @@
 package com.sparta.javafeed.service;
 
+import com.sparta.javafeed.dto.EmailSendResponseDto;
 import com.sparta.javafeed.dto.EmailVerifyCheckRequestDto;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
@@ -12,6 +13,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 @Service
@@ -78,17 +81,28 @@ public class EmailService {
     }
 
     //메일 발송
-    public String sendEmail(String email, String userEmail) throws MessagingException, UnsupportedEncodingException {
+    public EmailSendResponseDto sendEmail(String email, User loginUser) throws MessagingException, UnsupportedEncodingException {
         //같은 이메일을 입력했는지 검증
-        if (!userEmail.equals(email)) {
-            throw new CustomException(ErrorType.WRONG_EMAIL);
+        if (!loginUser.getEmail().equals(email)) {
+            throw new CustomException(ErrorType.INVALID_EMAIL);
         }
 
         //메일전송에 필요한 정보 설정
         MimeMessage emailForm = createEmailForm(email);
+
         //실제 메일 전송
         emailSender.send(emailForm);
-        return authNum; //인증 코드 반환
+
+        //전송 시간 기록
+        LocalDateTime sentAt = LocalDateTime.now();
+
+        // 회원 테이블에 이메일 전송 시간 저장
+        userService.updateUserEmailSent(email, sentAt);
+
+        // 만료 시간 설정 (전송 시간으로부터 3분 후)
+        LocalDateTime expiredAt = sentAt.plusMinutes(3);
+
+        return new EmailSendResponseDto(authNum, sentAt, expiredAt);
     }
 
     //메일 인증번호 확인
@@ -105,7 +119,7 @@ public class EmailService {
 
         //같은 이메일을 입력했는지 검증 로직
         if (!loginUser.getEmail().equals(requestDto.getEmail())) {
-            throw new CustomException(ErrorType.WRONG_EMAIL);
+            throw new CustomException(ErrorType.INVALID_EMAIL);
         }
 
         //올바른 인증번호를 입력했는지 확인하는 로직
@@ -113,8 +127,15 @@ public class EmailService {
             throw new CustomException(ErrorType.WRONG_AUTH_NUM);
         }
 
+        // 인증 시간 만료 검증 로직
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime emailSentAt = loginUser.getEmailSentAt();
+        if (ChronoUnit.SECONDS.between(emailSentAt, now) > 180) {
+            throw new CustomException(ErrorType.EXPIRED_AUTH_NUM);
+        }
+
         // 유저 테이블에서 userStatus 업데이트 처리
-        userService.verifyCode(requestDto);
+        userService.updateUserStatus(requestDto);
 
         return authNum.equals(requestDto.getAuthNum());
     }
