@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.*;
 import com.sparta.javafeed.dto.S3ResponseDto;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.ImgFileType;
+import com.sparta.javafeed.enums.VideoFileType;
 import com.sparta.javafeed.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
@@ -16,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -34,20 +33,27 @@ public class S3Util {
 
     /**
      * AWS S3 파일 업로드
-     * @param file 파일
+     *
+     * @param file    파일
+     * @param dirName 폴더 이름
      * @return 파일 url
      */
-    public S3ResponseDto uploadFile(MultipartFile file) {
+    public S3ResponseDto uploadFile(MultipartFile file, String dirName) {
         if (file.isEmpty()) {
             return null;
         }
 
-        // 파일 확장자 체크
-        validImgFile(file);
+        // 파일 확장자 및 용량 체크
+        if ("profile".equals(dirName)) {
+            validImageFile(file);
+        }else {
+            validFile(file);
+        }
 
         String originName = file.getOriginalFilename(); // 원본 파일명
         String extension = StringUtils.getFilenameExtension(originName); // 확장자
         String saveName = generateSaveFilename(originName);
+        String saveDir = dirName + "/" + saveName;
 
         ObjectMetadata metadata = new ObjectMetadata(); // 메타데이터
         metadata.setContentType(Mimetypes.getInstance().getMimetype(saveName));
@@ -56,14 +62,14 @@ public class S3Util {
         try {
             // AWS S3 파일 업로드
             PutObjectResult putObjectResult = amazonS3.putObject(
-                    new PutObjectRequest(bucketName, saveName, file.getInputStream(), metadata)
+                    new PutObjectRequest(bucketName, saveDir, file.getInputStream(), metadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new CustomException(ErrorType.UPLOAD_FAILED);
         }
 
         // 데이터베이스에 저장할 파일이 저장된 주소와 저장된 이름
-        return new S3ResponseDto(saveName, amazonS3.getUrl(bucketName, saveName).toString());
+        return new S3ResponseDto(saveDir, amazonS3.getUrl(bucketName, saveDir).toString());
     }
 
     /**
@@ -79,12 +85,35 @@ public class S3Util {
      * 파일 확장자 체크
      * @param file 파일
      */
-    private void validImgFile(MultipartFile file) {
+    private void validFile(MultipartFile file) {
         try {
             InputStream inputStream = file.getInputStream();
             String mimeType = tika.detect(inputStream);
 
-            ImgFileType.getImgFileType(mimeType);
+            if (ImgFileType.isImgFileType(mimeType)) {
+                ImgFileType.checkLimit(file);
+            } else if (VideoFileType.isVideoFileType(mimeType)) {
+                VideoFileType.checkLimit(file);
+            }else {
+                throw new CustomException(ErrorType.UNSUPPORTED_MEDIA_TYPE);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void validImageFile(MultipartFile file) {
+        try {
+            InputStream inputStream = file.getInputStream();
+            String mimeType = tika.detect(inputStream);
+
+            if (ImgFileType.isImgFileType(mimeType)) {
+                ImgFileType.checkLimit(file);
+            }else {
+                throw new CustomException(ErrorType.UNSUPPORTED_MEDIA_TYPE);
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

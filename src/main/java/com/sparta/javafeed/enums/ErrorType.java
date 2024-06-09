@@ -49,6 +49,9 @@ public enum ErrorType {
     // file
     NOT_IMGFILE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "이미지 파일만 업로드할 수 있습니다."),
     DOES_NOT_EXIST_FILE(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다."),
+    IMAGE_LIMIT_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "이미지 파일의 최대 용량은 10MB입니다."),
+    VIDEO_LIMIT_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "비디오 파일의 최대 용량은 200MB입니다."),
+    UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원하지 않는 미디어 유형입니다."),
 
     // AWS
     UPLOAD_FAILED(HttpStatus.GATEWAY_TIMEOUT, "파일 업로드에 실패하였습니다.");

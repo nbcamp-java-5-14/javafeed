@@ -1,13 +1,12 @@
 package com.sparta.javafeed.enums;
 
 import com.sparta.javafeed.exception.CustomException;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
 @Getter
-@AllArgsConstructor
 public enum ImgFileType {
 
     JPEG("image/jpeg"),
@@ -17,12 +16,20 @@ public enum ImgFileType {
     BMP("image/bmp"),
     X_WINDOWS_BMP("image/x-windows-bmp");
 
-    private String type;
+    private final String type;
+    private static final Long maxSize = 10L * 1024L * 1024L; // 최대 용량 제한 10MB
 
-    public static void getImgFileType(String fileType) {
-        Arrays.stream(ImgFileType.values())
-                .filter(imgFileType -> imgFileType.type.equals(fileType))
-                .findAny()
-                .orElseThrow(()-> new CustomException(ErrorType.NOT_IMGFILE));
+    ImgFileType(String type) {
+        this.type = type;
+    }
+
+    public static boolean isImgFileType(String fileType) {
+        return Arrays.stream(ImgFileType.values()).anyMatch(imgFileType -> imgFileType.type.equals(fileType));
+    }
+
+    public static void checkLimit(MultipartFile file) {
+        if (file.getSize() > maxSize) {
+            throw new CustomException(ErrorType.IMAGE_LIMIT_EXCEEDED);
+        }
     }
 }
