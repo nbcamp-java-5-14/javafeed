@@ -2,10 +2,8 @@ package com.sparta.javafeed.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.*;
+import com.sparta.javafeed.dto.S3ResponseDto;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.ImgFileType;
 import com.sparta.javafeed.exception.CustomException;
@@ -18,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -34,10 +34,10 @@ public class S3Util {
 
     /**
      * AWS S3 파일 업로드
-     * @param file
-     * @return
+     * @param file 파일
+     * @return 파일 url
      */
-    public String uploadFile(MultipartFile file) {
+    public S3ResponseDto uploadFile(MultipartFile file) {
         if (file.isEmpty()) {
             return null;
         }
@@ -62,8 +62,17 @@ public class S3Util {
             throw new CustomException(ErrorType.UPLOAD_FAILED);
         }
 
-        // 데이터베이스에 저장할 파일이 저장된 주소
-        return amazonS3.getUrl(bucketName, saveName).toString();
+        // 데이터베이스에 저장할 파일이 저장된 주소와 저장된 이름
+        return new S3ResponseDto(saveName, amazonS3.getUrl(bucketName, saveName).toString());
+    }
+
+    /**
+     * AWS S3 파일 삭제
+     * @param fileName 파일 url
+     */
+    public void deleteFile(String fileName) {
+        DeleteObjectRequest request = new DeleteObjectRequest(bucketName, fileName);
+        amazonS3.deleteObject(request);
     }
 
     /**
