@@ -1,11 +1,13 @@
 package com.sparta.javafeed.service;
 
 import com.sparta.javafeed.dto.*;
+import com.sparta.javafeed.entity.Profile;
 import com.sparta.javafeed.entity.User;
 import com.sparta.javafeed.enums.ErrorType;
 import com.sparta.javafeed.enums.UserStatus;
 import com.sparta.javafeed.exception.CustomException;
 import com.sparta.javafeed.jwt.JwtUtil;
+import com.sparta.javafeed.repository.ProfileRepository;
 import com.sparta.javafeed.repository.UserRepository;
 import com.sparta.javafeed.util.S3Util;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final S3Util s3Util;
@@ -208,16 +211,27 @@ public class UserService {
      */
     @Transactional
     public String uploadProfile(MultipartFile file, User user) {
+
         if (file.isEmpty()) {
             throw new CustomException(ErrorType.DOES_NOT_EXIST_FILE);
         }
 
         // AWS S3에 이미지 업로드
-        String profileImageUrl = s3Util.uploadFile(file);
+        S3ResponseDto responseDto = s3Util.uploadFile(file);
 
         User userByAccountId = this.findByAccountId(user.getAccountId());
-        userByAccountId.updateProfileImage(profileImageUrl);
 
-        return profileImageUrl;
+        Profile profile;
+        if (userByAccountId.getProfile() != null) { // 프로필 이미지가 존재하는 경우
+            profile = userByAccountId.getProfile();
+            profile.update(responseDto);
+            s3Util.deleteFile(userByAccountId.getProfile().getSaveFileName());
+        } else {
+            profile = new Profile(responseDto, userByAccountId);
+            profileRepository.save(profile);
+        }
+        userByAccountId.updateProfile(profile);
+
+        return responseDto.getUrl();
     }
 }

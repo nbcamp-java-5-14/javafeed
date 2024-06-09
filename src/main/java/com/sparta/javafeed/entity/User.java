@@ -61,8 +61,8 @@ public class User extends Timestamped {
     @Column
     private LocalDateTime emailSentAt;
 
-    @Column
-    private String profileImageUrl;
+    @OneToOne(mappedBy = "user")
+    private Profile profile;
 
     public User(SignupRequestDto signupRequest, String encodedPassword) {
         this.accountId = signupRequest.getAccountId();
@@ -99,7 +99,7 @@ public class User extends Timestamped {
         this.password = encodedNewPassword;
     }
 
-    public void updateProfileImage(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
+    public void updateProfile(Profile profile) {
+        this.profile = profile;
     }
 }
