@@ -19,6 +19,7 @@ public enum ErrorType {
     NO_AUTHENTICATION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     REQUIRES_LOGIN(HttpStatus.LOCKED, "로그인이 필요한 서비스입니다."),
+    EMAIL_VERIFICATION_REQUIRED(HttpStatus.LOCKED, "이메일 인증이 필요합니다."),
 
     // email_verify
     EXPIRED_AUTH_NUM(HttpStatus.LOCKED, "이메일 인증 코드가 만료 되었습니다."),

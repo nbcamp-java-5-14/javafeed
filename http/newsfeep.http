@@ -1,14 +1,8 @@
-### 게시글 생성 (파일 여러개 담는거 수정 필요)
+### 게시글 생성
 POST http://localhost:8080/posts
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
 Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="files"; filename="image1.png";
-Content-Type: image/png
-
-< file/image1.png
 
 --boundary
 Content-Disposition: form-data; name="title";
@@ -20,8 +14,29 @@ Content-Disposition: form-data; name="description";
 
 description
 
+--boundary
+Content-Disposition: form-data; name="files"; filename="image1.png";
+Content-Type: image/png
+
+< file/image1.png
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="gif.gif";
+Content-Type: image/gif
+
+< file/gif.gif
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="video.mp4";
+Content-Type: video/mp4
+
+< file/video.mp4
+
 ### 게시글 목록 조회
 GET http://localhost:8080/posts?page=1
+
+### 기간별 게시글 목록 조회
+GET http://localhost:8080/posts?page=1&searchStartDate=20240605&searchEndDate=20240610
 
 ### /posts/{id} <- path
 @id = 1
@@ -33,12 +48,6 @@ refreshToken: {{refreshToken}}
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="files"; filename="image2.png";
-Content-Type: image/png
-
-< file/image2.jpeg
-
---boundary
 Content-Disposition: form-data; name="title";
 
 updateTitle
@@ -47,6 +56,12 @@ updateTitle
 Content-Disposition: form-data; name="description";
 
 updateDescription
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="image2.png";
+Content-Type: image/png
+
+< file/image2.jpeg
 
 ### 게시글 삭제
 DELETE http://localhost:8080/posts/{{id}}

@@ -6,7 +6,7 @@ Content-Type: application/json
   "accountId": "user111111",
   "password": "1q2w3e4r!@#$",
   "name": "user1",
-  "email": "insidesy4@gmail.com"
+  "email": "ydh001027@gmail.com"
 }
 
 
@@ -54,9 +54,8 @@ refreshToken: {{refreshToken}}
 Content-Type: application/json
 
 {
-  "name": "updateName",
-  "email": "email123@email.com",
-  "intro": "intro"
+  "name": "유동현2",
+  "intro": "한 줄 소개입니다."
 }
 
 ### 회원 프로필 이미지 업로드

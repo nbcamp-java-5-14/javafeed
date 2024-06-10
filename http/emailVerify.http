@@ -6,7 +6,7 @@ refreshToken: {{refreshToken}}
 Content-Type: application/json
 
 {
-  "email" : "insidesy4@gmail.com"
+  "email" : "ydh001027@gmail.com"
 }
 
 
@@ -19,6 +19,6 @@ refreshToken: {{refreshToken}}
 Content-Type: application/json
 
 {
-  "email" : "insidesy4@gmail.com",
-  "authNum": "gLSTnfJm"
+  "email" : "ydh001027@gmail.com",
+  "authNum": "20N63N7e"
 }
