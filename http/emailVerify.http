@@ -1,0 +1,24 @@
+
+### 이메일 인증번호 전송
+POST http://localhost:8080/email
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "email" : "ydh001027@gmail.com"
+}
+
+
+
+
+### 인증번호 확인
+POST http://localhost:8080/email/verify
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "email" : "ydh001027@gmail.com",
+  "authNum": "20N63N7e"
+}

@@ -1,0 +1,97 @@
+### 회원가입
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "accountId": "user111111",
+  "password": "1q2w3e4r!@#$",
+  "name": "user1",
+  "email": "ydh001027@gmail.com"
+}
+
+
+
+### 로그인
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "accountId": "user111111",
+  "password": "1q2w3e4r!@#$"
+}
+
+> {%
+    client.log(response.headers.valueOf("accessToken"));
+    client.log(response.headers.valueOf("refreshToken"));
+    client.global.set("accessToken", response.headers.valueOf("accessToken"));
+    client.global.set("refreshToken", response.headers.valueOf("refreshToken"));
+%}
+
+
+
+### 로그아웃
+POST http://localhost:8080/users/logout
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+
+> {%
+    client.global.clear("accessToken");
+    client.global.clear("refreshToken");
+%}
+
+
+
+
+### 회원 프로필 조회
+GET http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+
+### 회원 프로필 수정
+PUT http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "name": "유동현2",
+  "intro": "한 줄 소개입니다."
+}
+
+### 회원 프로필 이미지 업로드
+POST http://localhost:8080/users/profile
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="uploadImage.png";
+Content-Type: image/png
+
+< file/image1.png
+
+
+
+### 회원 비밀번호 변경
+PATCH http://localhost:8080/users/password
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "1q2w3e4r!@#$",
+  "newPassword": "1qaz2wsx!@"
+}
+
+
+
+
+### 회원 상태 비활성화
+PATCH http://localhost:8080/users
+accessToken: {{accessToken}}
+refreshToken: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "password": "1q2w3e4r!@#$"
+}
