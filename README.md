@@ -52,7 +52,7 @@ resolves: #1137
 <br>
 
 ### ERD
-<img width="400" alt="image" src="[https://ifh.cc/g/NB4Wmg.png](https://github.com/nbcamp-java-5-14/javafeed/assets/132278619/bd992282-ecf7-4e36-94ea-d95a54c3112c)">
+<img width="400" alt="image" src="https://ifh.cc/g/NB4Wmg.png](https://github.com/nbcamp-java-5-14/javafeed/assets/132278619/bd992282-ecf7-4e36-94ea-d95a54c3112c)">
 
 <br>
 <br>
