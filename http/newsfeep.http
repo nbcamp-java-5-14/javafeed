@@ -1,16 +1,27 @@
-### 게시글 생성
+### 게시글 생성 (파일 여러개 담는거 수정 필요)
 POST http://localhost:8080/posts
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-  "title": "testTitle",
-  "description": "testDescription"
-}
+--boundary
+Content-Disposition: form-data; name="files"; filename="image1.png";
+Content-Type: image/png
+
+< file/image1.png
+
+--boundary
+Content-Disposition: form-data; name="title";
+
+title
+
+--boundary
+Content-Disposition: form-data; name="description";
+
+description
 
 ### 게시글 목록 조회
-GET http://localhost:8080/posts
+GET http://localhost:8080/posts?page=1
 
 ### /posts/{id} <- path
 @id = 1
@@ -19,12 +30,23 @@ GET http://localhost:8080/posts
 PUT http://localhost:8080/posts/{{id}}
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-  "title": "updateTitle",
-  "description": "updateDescription"
-}
+--boundary
+Content-Disposition: form-data; name="files"; filename="image2.png";
+Content-Type: image/png
+
+< file/image2.jpeg
+
+--boundary
+Content-Disposition: form-data; name="title";
+
+updateTitle
+
+--boundary
+Content-Disposition: form-data; name="description";
+
+updateDescription
 
 ### 게시글 삭제
 DELETE http://localhost:8080/posts/{{id}}

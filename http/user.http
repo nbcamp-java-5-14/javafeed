@@ -69,7 +69,7 @@ Content-Type: multipart/form-data; boundary=boundary
 Content-Disposition: form-data; name="file"; filename="uploadImage.png";
 Content-Type: image/png
 
-< profileImage.png
+< file/image1.png
 
 
 

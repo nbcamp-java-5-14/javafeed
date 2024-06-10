@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +25,15 @@ import java.util.stream.Collectors;
 public class NewsfeedService {
 
     private final NewsfeedRepository newsfeedRepository;
+    private final FileService fileService;
 
     @Transactional
     public NewsfeedResponseDto save(NewsfeedRequestDto requestDto, User user) {
         Newsfeed newsfeed = newsfeedRepository.save(requestDto.toEntity(user));
+
+        // 파일 업로드
+        fileService.saveFiles(newsfeed, requestDto.getFiles());
+
         return NewsfeedResponseDto.toDto(newsfeed);
     }
 
@@ -56,6 +60,11 @@ public class NewsfeedService {
     @Transactional
     public Long updateNewsfeed(Long id, NewsfeedRequestDto requestDto, User user) {
         Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
+
+        fileService.deleteFiles(newsfeed.getFileList());
+
+        fileService.saveFiles(newsfeed, requestDto.getFiles());
+
         newsfeed.update(requestDto);
         return newsfeed.getId();
 
@@ -65,6 +74,9 @@ public class NewsfeedService {
     public Long deleteNewsfeed(Long id, User user) {
         Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
         newsfeedRepository.delete(newsfeed);
+
+        // 파일 삭제
+        fileService.deleteFiles(newsfeed.getFileList());
         return newsfeed.getId();
     }
 

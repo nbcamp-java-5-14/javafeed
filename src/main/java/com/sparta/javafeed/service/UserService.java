@@ -217,15 +217,15 @@ public class UserService {
         }
 
         // AWS S3에 이미지 업로드
-        S3ResponseDto responseDto = s3Util.uploadFile(file);
+        S3ResponseDto responseDto = s3Util.uploadFile(file, "profile");
 
         User userByAccountId = this.findByAccountId(user.getAccountId());
 
         Profile profile;
         if (userByAccountId.getProfile() != null) { // 프로필 이미지가 존재하는 경우
+            s3Util.deleteFile(userByAccountId.getProfile().getSaveFileName());
             profile = userByAccountId.getProfile();
             profile.update(responseDto);
-            s3Util.deleteFile(userByAccountId.getProfile().getSaveFileName());
         } else {
             profile = new Profile(responseDto, userByAccountId);
             profileRepository.save(profile);
