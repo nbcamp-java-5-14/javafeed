@@ -24,7 +24,7 @@ description
 GET http://localhost:8080/posts?page=1
 
 ### /posts/{id} <- path
-@id = 1
+@id = 11
 
 ### 게시글 수정
 PUT http://localhost:8080/posts/{{id}}

@@ -69,6 +69,9 @@ public class NewsfeedService {
     public Long deleteNewsfeed(Long id, User user) {
         Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
         newsfeedRepository.delete(newsfeed);
+
+        // 파일 삭제
+        fileService.deleteFiles(newsfeed.getFileList());
         return newsfeed.getId();
     }
 

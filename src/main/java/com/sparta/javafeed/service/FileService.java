@@ -50,4 +50,14 @@ public class FileService {
         }
         return fileList;
     }
+
+    public void deleteFiles(List<File> fileList) {
+        if (CollectionUtils.isEmpty(fileList)) {
+            return;
+        }
+
+        for (File file : fileList) {
+            s3Util.deleteFile(file.getSaveName());
+        }
+    }
 }
