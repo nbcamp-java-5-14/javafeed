@@ -82,7 +82,7 @@ public class S3Util {
     }
 
     /**
-     * 파일 확장자 체크
+     * 비디오 파일 확장자 및 용량 체크
      * @param file 파일
      */
     private void validFile(MultipartFile file) {
@@ -103,6 +103,10 @@ public class S3Util {
         }
     }
 
+    /**
+     * 이미지 파일 확장자 및 용량 체크
+     * @param file 파일
+     */
     private void validImageFile(MultipartFile file) {
         try {
             InputStream inputStream = file.getInputStream();

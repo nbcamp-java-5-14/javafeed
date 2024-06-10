@@ -5,10 +5,10 @@ refreshToken: {{refreshToken}}
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="files"; filename="uploadImage.png";
+Content-Disposition: form-data; name="files"; filename="image1.png";
 Content-Type: image/png
 
-< profileImage.png
+< file/image1.png
 
 --boundary
 Content-Disposition: form-data; name="title";
@@ -24,18 +24,29 @@ description
 GET http://localhost:8080/posts?page=1
 
 ### /posts/{id} <- path
-@id = 11
+@id = 1
 
 ### 게시글 수정
 PUT http://localhost:8080/posts/{{id}}
 accessToken: {{accessToken}}
 refreshToken: {{refreshToken}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-  "title": "updateTitle",
-  "description": "updateDescription"
-}
+--boundary
+Content-Disposition: form-data; name="files"; filename="image2.png";
+Content-Type: image/png
+
+< file/image2.jpeg
+
+--boundary
+Content-Disposition: form-data; name="title";
+
+updateTitle
+
+--boundary
+Content-Disposition: form-data; name="description";
+
+updateDescription
 
 ### 게시글 삭제
 DELETE http://localhost:8080/posts/{{id}}

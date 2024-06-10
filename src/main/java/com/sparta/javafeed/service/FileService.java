@@ -22,6 +22,11 @@ public class FileService {
     private final FileRepository fileRepository;
     private final S3Util s3Util;
 
+    /**
+     * 다중 파일 등록
+     * @param newsfeed 게시글
+     * @param files 파일 목록
+     */
     public void saveFiles(Newsfeed newsfeed, List<MultipartFile> files) {
         if (CollectionUtils.isEmpty(files)) {
             return;
@@ -40,6 +45,11 @@ public class FileService {
         fileRepository.saveAll(fileList);
     }
 
+    /**
+     * AWS S3 다중 파일 업로드
+     * @param files 파일 목록
+     * @return 파일 업로드 정보 목록
+     */
     private List<S3ResponseDto> uploadFiles(List<MultipartFile> files) {
         List<S3ResponseDto> fileList = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -51,6 +61,10 @@ public class FileService {
         return fileList;
     }
 
+    /**
+     * 다중 파일 삭제
+     * @param fileList 파일 목록
+     */
     public void deleteFiles(List<File> fileList) {
         if (CollectionUtils.isEmpty(fileList)) {
             return;
@@ -59,5 +73,7 @@ public class FileService {
         for (File file : fileList) {
             s3Util.deleteFile(file.getSaveName());
         }
+
+        fileRepository.deleteAll(fileList);
     }
 }

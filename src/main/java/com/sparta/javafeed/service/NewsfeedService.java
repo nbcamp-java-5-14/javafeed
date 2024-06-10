@@ -60,6 +60,11 @@ public class NewsfeedService {
     @Transactional
     public Long updateNewsfeed(Long id, NewsfeedRequestDto requestDto, User user) {
         Newsfeed newsfeed = checkValidatedNewsfeed(id, user);
+
+        fileService.deleteFiles(newsfeed.getFileList());
+
+        fileService.saveFiles(newsfeed, requestDto.getFiles());
+
         newsfeed.update(requestDto);
         return newsfeed.getId();
 
