@@ -3,18 +3,18 @@
 # SpartaNbCamp-JavaFeed Project
 [Team Project] <br>
 뉴스피드 서비스에 필요한 기본 기능등을 Spring Boot를 기반으로 <br>
-- CRUD(Create, Read, Update, Delete)기능
-- REST API
-- 회원가입
-- 로그인
-- JWT
-- SECURITY
-- 이메일 인증
-- 게시물 작성
-- 댓글
-- 좋아요
-- AWS S3 프로필 사진 저장
-- Swagger
+- `CRUD(Create, Read, Update, Delete)기능`
+- `REST API`
+- `회원가입`
+- `로그인`
+- `JWT`
+- `SECURITY`
+- `이메일 인증`
+- `게시물 작성`
+- `댓글`
+- `좋아요`
+- `AWS S3 프로필 사진 저장`
+- `Swagger`
 등을 구현하여 공부하는 목적의 팀 프로젝트 입니다.
 
 
