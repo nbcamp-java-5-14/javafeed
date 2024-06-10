@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -25,7 +23,7 @@ public class NewsfeedController {
 
     @PostMapping
     public ResponseEntity<?> createNewsfeed(
-            @Valid @RequestBody NewsfeedRequestDto requestDto,
+            @ModelAttribute @Valid NewsfeedRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         NewsfeedResponseDto responseDto = newsfeedService.save(requestDto, userDetails.getUser());
         ResponseEntityDto<NewsfeedResponseDto> responseEntity = new ResponseEntityDto<>(ResponseStatus.POST_CREATE_SUCCESS, responseDto);
